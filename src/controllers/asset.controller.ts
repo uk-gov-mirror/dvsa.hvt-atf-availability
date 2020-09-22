@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import path from 'path';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.util';
 
 export const file = (req: Request, res: Response): void => {
   const filePath = path.join(__dirname, 'public', req.params.asset);
