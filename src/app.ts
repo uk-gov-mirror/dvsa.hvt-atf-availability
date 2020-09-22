@@ -2,11 +2,11 @@ import path from 'path';
 import express, {
   Express, Router, Request, Response, NextFunction,
 } from 'express';
-import nunjucks from 'nunjucks';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import compression from 'compression';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
+import setUpNunJucks from './util/viewhelpers';
 import indexRoute from './routes/index.route';
 import assetRoute from './routes/asset.route';
 
@@ -19,10 +19,7 @@ const routes: Router[] = [
 // View engine
 app.set('view engine', 'njk');
 app.set('views', path.join(__dirname, 'views'));
-nunjucks.configure(['views', 'govuk-frontend'], {
-  autoescape: true,
-  express: app,
-});
+setUpNunJucks(app);
 
 // Middleware
 app.use(compression());
