@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import path from 'path';
+import { logger } from '../utils/logger';
 
 export const file = (req: Request, res: Response): void => {
   const filePath = path.join(__dirname, 'public', req.params.asset);
@@ -7,7 +8,7 @@ export const file = (req: Request, res: Response): void => {
   try {
     return res.sendFile(filePath);
   } catch (error) {
-    console.error(error);
+    logger.error(req, error);
     throw error;
   }
 };
@@ -18,7 +19,7 @@ export const imageFile = (req: Request, res: Response): void => {
   try {
     return res.sendFile(filePath);
   } catch (error) {
-    console.error(error);
+    logger.error(req, error);
     throw error;
   }
 };
@@ -29,7 +30,7 @@ export const fontFile = (req: Request, res: Response): void => {
   try {
     return res.sendFile(filePath);
   } catch (error) {
-    console.error(error);
+    logger.error(req, error);
     throw error;
   }
 };
