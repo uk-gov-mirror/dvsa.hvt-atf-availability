@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 import { Request } from 'express';
-import { logger } from '../../src/utils/logger';
+import { logger } from '../../src/utils/logger.util';
 
 let apiRequestId: string;
 let awsRequestId: string;

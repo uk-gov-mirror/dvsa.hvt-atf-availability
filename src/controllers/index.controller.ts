@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { AxiosResponse } from 'axios';
-import { request } from '../utils/request';
+import { request } from '../utils/request.util';
 import { Index } from '../models/index.model';
-import { logger } from '../utils/logger';
+import { logger } from '../utils/logger.util';
 
 export const index = async (req: Request, res: Response): Promise<void> => {
   logger.info(req, 'Retrieving data from api..');

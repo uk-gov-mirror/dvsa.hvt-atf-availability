@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { v4 } from 'uuid';
 import { Request } from 'express';
-import { request } from '../../src/utils/request';
+import { request } from '../../src/utils/request.util';
 
 let apiRequestId: string;
 let awsRequestId: string;

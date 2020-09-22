@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import compression from 'compression';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
-import setUpNunJucks from './util/viewhelpers';
+import { setUpNunjucks } from './utils/viewHelpers.util';
 import indexRoute from './routes/index.route';
 import assetRoute from './routes/asset.route';
 
@@ -19,7 +19,7 @@ const routes: Router[] = [
 // View engine
 app.set('view engine', 'njk');
 app.set('views', path.join(__dirname, 'views'));
-setUpNunJucks(app);
+setUpNunjucks(app);
 
 // Middleware
 app.use(compression());
