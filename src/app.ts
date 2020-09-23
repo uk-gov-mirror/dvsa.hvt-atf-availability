@@ -6,9 +6,13 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import compression from 'compression';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
-import { setUpNunjucks } from './utils/viewHelpers.util';
+import dotenv from 'dotenv';
+import { setUpNunjucks } from './utils/viewHelper.util';
 import indexRoute from './routes/index.route';
 import assetRoute from './routes/asset.route';
+
+// Load environment variables
+dotenv.config();
 
 const app: Express = express();
 const routes: Router[] = [

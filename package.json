@@ -6,7 +6,7 @@
     "lint": "eslint '*/**/*.ts' --quiet --fix",
     "test": "jest --coverage",
     "build:dev": "NODE_ENV=development webpack-cli",
-    "start:dev": "sam local start-api -p 3001 --docker-network hvt-lambda-network"
+    "start:dev": "sam local start-api -p 3002 --docker-network hvt-lambda-network"
   },
   "contributers": [
     {
@@ -22,6 +22,7 @@
     "body-parser": "^1.17.1",
     "compression": "^1.6.2",
     "cors": "^2.8.3",
+    "dotenv": "^8.2.0",
     "express": "^4.15.2",
     "govuk-frontend": "^3.9.0",
     "nunjucks": "^3.2.2"

@@ -56,6 +56,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: './simple-proxy-api.yml', to: '.aws-sam/build/simple-proxy-api.yml' },
+        { from: './.env', to: `.aws-sam/build/${lambdaName}/` },
         { from: './src/views', to: `.aws-sam/build/${lambdaName}/views` },
         { from: './node_modules/govuk-frontend', to: `.aws-sam/build/${lambdaName}/govuk-frontend` },
         // TODO -  remove `./src/public` from repository and create step that does the following: 
