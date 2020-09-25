@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "eslint '*/**/*.ts' --quiet --fix",
     "test": "jest --coverage",
-    "build:dev": "NODE_ENV=development webpack-cli",
+    "build:dev": "webpack-cli --config webpack.development.js",
     "start:dev": "sam local start-api -p 3002 --docker-network hvt-lambda-network"
   },
   "contributers": [
@@ -39,9 +39,13 @@
     "@types/uuid": "^8.3.0",
     "aws-sam-webpack-plugin": "^0.6.0",
     "copy-webpack-plugin": "^6.1.0",
+    "css-loader": "^3.2.0",
     "eslint": "^7.6.0",
     "eslint-import-resolver-typescript": "^2.3.0",
     "jest": "^26.4.2",
+    "mini-css-extract-plugin": "^0.8.0",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^8.0.0",
     "source-map-support": "^0.5.19",
     "ts-jest": "^26.3.0",
     "ts-loader": "^8.0.3",
