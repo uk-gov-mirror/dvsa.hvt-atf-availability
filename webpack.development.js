@@ -1,17 +1,15 @@
 const path = require('path');
 const AwsSamPlugin = require('aws-sam-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const sass = require('node-sass');
 
 const awsSamPlugin = new AwsSamPlugin({ vscodeDebug: false });
 const lambdaName = "LambdaFunction"; // must correspond to lambda name in template.yml
 
 module.exports = {
-  entry: Object.assign(awsSamPlugin.entry(), { css: ['./node_modules/govuk-frontend/govuk/all.scss'] }),
+  entry: () => awsSamPlugin.entry(),
   output: {
-    filename: ({ chunk: { name } }) => {
-      return name === lambdaName ? `.aws-sam/build/${lambdaName}/app.js`: '.aws-sam/build/.artefacts/[name].js';
-    },
+    filename: (chunkData) => awsSamPlugin.filename(chunkData),
     libraryTarget: 'commonjs2',
     path: path.resolve('.')
   },
@@ -32,14 +30,6 @@ module.exports = {
           test: /\.tsx?$/, 
           loader: 'ts-loader' 
         },
-        {
-          test: /\.scss$/,
-          use: [
-            MiniCssExtractPlugin.loader,
-            'css-loader',
-            'sass-loader'
-          ],
-        },
     ]
   },
   plugins: [
@@ -52,11 +42,12 @@ module.exports = {
         { from: './node_modules/govuk-frontend', to: `.aws-sam/build/${lambdaName}/govuk-frontend` },
         { from: './node_modules/govuk-frontend/govuk/assets', to: `.aws-sam/build/${lambdaName}/public/assets` },
         { from: './node_modules/govuk-frontend/govuk/all.js', to: `.aws-sam/build/${lambdaName}/public/all.js` },
+        { 
+          from: './src/scss/index.scss',
+          to: `.aws-sam/build/${lambdaName}/public/all.css`,
+          transform: (content, path) => sass.renderSync({ file: path }).css.toString(),
+        },
       ],
-    }),
-    new MiniCssExtractPlugin({
-      filename: `.aws-sam/build/${lambdaName}/public/all.css`,
-      chunkFilename: `.aws-sam/build/${lambdaName}/public/[id].css`,
     }),
   ],
 };

@@ -10,5 +10,9 @@ module.exports = {
       lines: 75,
       statements: 75
     }
-  }
+  },
+  coveragePathIgnorePatterns: [
+    '<rootDir>/src/utils/viewHelper.util.ts',
+    '<rootDir>/tests/data-providers/'
+  ]
 };

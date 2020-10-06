@@ -8,16 +8,16 @@ import compression from 'compression';
 import awsServerlessExpressMiddleware from 'aws-serverless-express/middleware';
 import dotenv from 'dotenv';
 import { setUpNunjucks } from './utils/viewHelper.util';
-import indexRoute from './routes/index.route';
 import assetRoute from './routes/asset.route';
+import availabilityRoute from './routes/availability.route';
 
 // Load environment variables
 dotenv.config();
 
 const app: Express = express();
 const routes: Router[] = [
-  indexRoute,
   assetRoute,
+  availabilityRoute,
 ];
 
 // View engine

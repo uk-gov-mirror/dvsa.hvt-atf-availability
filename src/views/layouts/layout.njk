@@ -22,7 +22,7 @@
 
 <head>
   <meta charset="utf-8">
-<title>{% block pageTitle %}GOV.UK - Customised page template{% endblock %}</title>
+<title>{% block pageTitle %}{{ pageSettings.serviceName | default('GOV.UK') }}{% endblock %}</title>
 
 {% block headIcons %}
   <link rel="shortcut icon" href="/assets/images/favicon.ico" type="image/x-icon" />
@@ -53,7 +53,7 @@
   {{ govukHeader({
     homepageUrl: "#",
     containerClasses: "govuk-width-container",
-    serviceName: "Service name",
+    serviceName: pageSettings.serviceName | default('GOV.UK'),
     serviceUrl: "#"
   }) }}
   
@@ -61,22 +61,26 @@
 <div class="govuk-width-container ">
 {% set mainClasses = "app-main-class" %}
 
- <main class="govuk-main-wrapper " id="main-content" role="main">
+ <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
 {% block main %}
   
 {% endblock %}
 
 {% block beforeContent %}
-  {{ govukPhaseBanner({
-    tag: {
-      text: "alpha"
-    },
-    html: 'This is a new service – your <a class="govuk-link" href="#">feedback</a> will help us to improve it.'
-  }) }}
-  {{ govukBackLink({
-    href: "#",
-    text: "Back"
-  }) }}
+  {% if not pageSettings.hideNewServiceBanner %}
+    {{ govukPhaseBanner({
+      tag: {
+        text: "alpha"
+      },
+      html: 'This is a new service – your <a class="govuk-link" href="#">feedback</a> will help us to improve it.'
+    }) }}
+  {% endif %}
+  {% if not pageSettings.hideBackLink %}
+    {{ govukBackLink({
+      href: "#",
+      text: "Back"
+    }) }}
+  {% endif %}
 {% endblock %}
 
 {% block content %}
