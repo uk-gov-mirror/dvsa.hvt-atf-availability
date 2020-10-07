@@ -5,25 +5,26 @@
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <p class="govuk-body-s">Last updated on {{ atf.availability.lastUpdated | formatDateTime }}</p>
+    <p class="govuk-body-s" id="last-updated-date" >Last updated on {{ atf.availability.lastUpdated | formatDateTime }}</p>
 
     {{ govukPanel({
       titleText: atf.name + " is fully booked",
-      classes: "panel--full"
+      classes: "panel--full",
+      attributes: { id: "availability-panel" }
     }) }}
 
-    <p class="govuk-body-m">We have sent you a confirmation e-mail.</p>
+    <p class="govuk-body-m">We have sent you a confirmation email.</p>
 
     <h2 class="govuk-heading-m">Your availability</h2>
     <p class="govuk-body-m">
       You have told us that your test facility is fully booked between 
-      <span class="govuk-!-font-weight-bold">{{ atf.availability.startDate | formatDate }} and {{ atf.availability.endDate | formatDate }}</span>
+      <span id="availability-dates" class="govuk-!-font-weight-bold">{{ atf.availability.startDate | formatDate }} and {{ atf.availability.endDate | formatDate }}.</span>
     </p>
     <p class="govuk-body">People who need MOT tests can see your availability for the next 4 weeks when they <a href="#">search for their nearest test facility</a>.</p>
 
     <h2 class="govuk-heading-m">What happens next</h2>
     <p class="govuk-body-m">We will email you next week so you can update your availability for the following 4 weeks.</p>
-    <p class="govuk-body-m">You can update your availability before then using the links in your confirmation e-mail.</p>
+    <p class="govuk-body-m">You can update your availability before then using the links in your confirmation email.</p>
 
     <h3 class="govuk-heading-s">Could you open on Saturdays?</h2>
     <p class="govuk-body-m">If you could open on Saturdays, please contact your local network business manager.</p>
