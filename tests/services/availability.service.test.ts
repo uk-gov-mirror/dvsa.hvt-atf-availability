@@ -9,6 +9,7 @@ import { logger } from '../../src/utils/logger.util';
 request.get = jest.fn();
 request.put = jest.fn();
 logger.info = jest.fn();
+logger.error = jest.fn();
 
 process.env = {
   API_BASE_URL_READ: 'api-base-uri-read',
@@ -88,11 +89,20 @@ describe('Test availabilityService', () => {
       );
     });
 
-    it('should reject the promise when something went wrong', async () => {
-      (request.put as jest.Mock).mockReturnValue(Promise.reject(new Error('Ooops!')));
+    it('should return an empty ATF and log error when error occured', async () => {
+      const expectedError: Error = new Error('Ooops!');
+      (request.put as jest.Mock).mockReturnValue(Promise.reject(expectedError));
 
-      await expect(availabilityService.updateAtfAvailability({} as Request, tokenPayload))
-        .rejects.toEqual(new Error('Ooops!'));
+      const result: AuthorisedTestingFacility = await availabilityService.updateAtfAvailability(
+        {} as Request,
+        tokenPayload,
+      );
+
+      expect(result).toStrictEqual({});
+      expect(logger.error).toHaveBeenCalledWith(
+        {} as Request,
+        `Could not update ATF availability, error: ${JSON.stringify(expectedError)}`,
+      );
     });
   });
 });
