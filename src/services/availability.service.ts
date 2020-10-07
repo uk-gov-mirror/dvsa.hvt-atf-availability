@@ -29,7 +29,12 @@ const updateAtfAvailability = async (req: Request, tokenPayload: TokenPayload): 
     `${process.env.API_BASE_URL_WRITE}${process.env.DYNAMODB_ATF_TABLE_NAME}/${tokenPayload.atfId}?keyName=id`,
     { availability },
   )
-    .then((response: AxiosResponse<AuthorisedTestingFacility>) => response.data);
+    .then((response: AxiosResponse<AuthorisedTestingFacility>) => response.data)
+    .catch((error) => {
+      logger.error(req, `Could not update ATF availability, error: ${JSON.stringify(error)}`);
+
+      return <AuthorisedTestingFacility> {};
+    });
 };
 
 export const availabilityService = {
