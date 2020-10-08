@@ -2,7 +2,7 @@ import { Request } from 'express';
 import { request } from '../../src/utils/request.util';
 import { AuthorisedTestingFacility, Availability } from '../../src/models/authorisedTestingFacility.model';
 import { availabilityService } from '../../src/services/availability.service';
-import { getAtf } from '../data-providers/atf-data-provider';
+import { getAtf } from '../data-providers/atf.dataProvider';
 import { TokenPayload } from '../../src/models/token.model';
 import { logger } from '../../src/utils/logger.util';
 

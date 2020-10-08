@@ -1,28 +1,46 @@
-import { TokenStatus } from '../enums/token.enum';
+import jwt, { TokenExpiredError } from 'jsonwebtoken';
+import { Request } from 'express';
 import { TokenPayload } from '../models/token.model';
+import { logger } from '../utils/logger.util';
+import { ExpiredTokenException } from '../exceptions/expiredToken.exception';
+import { InvalidTokenException } from '../exceptions/invalidToken.exception';
 
-const getTokenStatus = (token: string): TokenStatus => {
-  // TODO: add logic for retrieving token status using jsonwebtoken (RTA-19)
-  if (token === 'valid') {
-    return TokenStatus.VALID;
+const extractTokenPayload = (req: Request): TokenPayload => {
+  const token: string = retrieveTokenFromQueryParams(req);
+  logger.info(req, `Extracting token payload, token: ${token}`);
+
+  if (token === undefined) {
+    logger.warn(req, 'Token missing from query params');
+    throw new InvalidTokenException('Token is undefined');
   }
 
-  if (token === 'invalid') {
-    return TokenStatus.INVALID;
-  }
+  try {
+    const decodedToken: Record<string, unknown> = decodeToken(token);
+    logger.info(req, 'Successfully decoded token');
 
-  return TokenStatus.EXPIRED;
+    return {
+      atfId: <string> decodedToken.sub,
+      isAvailable: <boolean> decodedToken.isAvailable,
+      startDate: new Date(<number> decodedToken.startDate * 1000).toISOString(),
+      endDate: new Date(<number> decodedToken.endDate * 1000).toISOString(),
+    };
+  } catch (error) {
+    if (error instanceof TokenExpiredError) {
+      logger.warn(req, `Expired token provided, error: ${JSON.stringify(error)}`);
+      throw new ExpiredTokenException(`Token [${token}] is expired`);
+    }
+
+    logger.warn(req, `Invalid token provided, error: ${JSON.stringify(error)}`);
+    throw new InvalidTokenException(`Token [${token}] is invalid`);
+  }
 };
 
-const extractTokenPayload = (token: string): TokenPayload => ({
-  // TODO: add logic for extracting token payload data using jsonwebtoken (RTA-19)
-  atfId: '941E0D96-0D40-403E-A227-02CB775F0EFB',
-  isAvailable: false,
-  startDate: '2020-09-21T08:00:00Z',
-  endDate: '2020-10-11T17:00:00Z',
-});
+const retrieveTokenFromQueryParams = (req: Request): string => <string> req.query?.token;
+
+// eslint-disable-next-line max-len
+const decodeToken = (token: string): Record<string, unknown> => <Record<string, unknown>> jwt.verify(token, process.env.JWT_SECRET);
 
 export const tokenService = {
-  getTokenStatus,
   extractTokenPayload,
+  retrieveTokenFromQueryParams,
 };
