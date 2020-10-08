@@ -13,6 +13,7 @@ module.exports = {
   },
   coveragePathIgnorePatterns: [
     '<rootDir>/src/utils/viewHelper.util.ts',
-    '<rootDir>/tests/data-providers/'
+    '<rootDir>/tests/data-providers/',
+    '<rootDir>/src/exceptions'
   ]
 };
