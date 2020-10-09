@@ -29,7 +29,7 @@ describe('Test viewHelper', () => {
       formatDate(someDateIsoString);
 
       expect(utcToZonedTime).toHaveBeenCalledWith(new Date(someDateIsoString), timezone);
-      expect(format).toHaveBeenCalledWith(new Date(someDateIsoString), 'dd MMMM yyyy');
+      expect(format).toHaveBeenCalledWith(new Date(someDateIsoString), 'd MMMM yyyy');
     });
   });
 
@@ -41,7 +41,7 @@ describe('Test viewHelper', () => {
       formatDateTime(someDateIsoString);
 
       expect(utcToZonedTime).toHaveBeenCalledWith(new Date(someDateIsoString), timezone);
-      expect(format).toHaveBeenCalledWith(new Date(someDateIsoString), 'EEEE dd MMMM yyyy \'at\' h:mm aaaa');
+      expect(format).toHaveBeenCalledWith(new Date(someDateIsoString), 'EEEE d MMMM yyyy \'at\' h:mmaaaaa\'m\'');
     });
   });
 });
