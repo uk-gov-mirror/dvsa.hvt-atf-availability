@@ -6,7 +6,7 @@ let apiRequestId: string;
 let awsRequestId: string;
 let requestMock: Request;
 
-describe('Test logger', () => {
+describe('Test logger.util', () => {
   beforeAll(() => {
     apiRequestId = v4();
     awsRequestId = v4();

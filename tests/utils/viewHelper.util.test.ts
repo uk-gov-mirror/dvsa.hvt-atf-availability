@@ -16,7 +16,7 @@ jest.mock('date-fns-tz', () => ({
   utcToZonedTime: jest.fn(),
 }));
 
-describe('Test viewHelper', () => {
+describe('Test viewHelper.util', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

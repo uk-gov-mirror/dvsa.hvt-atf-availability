@@ -1,10 +1,12 @@
 import { Request } from 'express';
 import jwt from 'jsonwebtoken';
+import { AxiosResponse } from 'axios';
 import { TokenPayload } from '../../src/models/token.model';
 import { tokenService } from '../../src/services/token.service';
 import { logger } from '../../src/utils/logger.util';
 import { ExpiredTokenException } from '../../src/exceptions/expiredToken.exception';
 import { InvalidTokenException } from '../../src/exceptions/invalidToken.exception';
+import { request } from '../../src/utils/request.util';
 import {
   getExpiredYesToken,
   getInvalidToken,
@@ -14,8 +16,9 @@ import {
 logger.warn = jest.fn();
 logger.info = jest.fn();
 process.env.JWT_SECRET = getJwtSecret();
+process.env.GENERATE_TOKEN_URL = 'http://generate-token-url.gov';
 
-describe('Test tokenService', () => {
+describe('Test token.service', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -67,6 +70,22 @@ describe('Test tokenService', () => {
       });
       expect(logger.info).toBeCalledWith(req, 'Successfully decoded token');
     });
+
+    it('should return properly decoded token payload data when when expired tokens are ignored', () => {
+      // this is for the purpose of extracting ATF ID from an expired token (so that a new one can be requested)
+      const expiredToken: string = getExpiredYesToken();
+      const req: Request = <Request> <unknown> { query: { token: expiredToken } };
+
+      const result: TokenPayload = tokenService.extractTokenPayload(req);
+
+      expect(result).toStrictEqual({
+        atfId: 'atf-id-sample',
+        isAvailable: true,
+        startDate: '2020-10-05T13:06:52.000Z',
+        endDate: '2020-10-05T13:07:00.000Z',
+      });
+      expect(logger.info).toBeCalledWith(req, 'Successfully decoded token');
+    });
   });
 
   describe('retrieveTokenFromQueryParams method', () => {
@@ -85,6 +104,36 @@ describe('Test tokenService', () => {
       const result: string = tokenService.retrieveTokenFromQueryParams(req);
 
       expect(result).toBe(undefined);
+    });
+  });
+
+  describe('reissueToken method', () => {
+    it('should call request util with correct params', async () => {
+      const requestMock = jest.spyOn(request, 'post');
+      const token = 'foo';
+      const req: Request = <Request> <unknown> { query: { token } };
+      requestMock.mockReturnValue(Promise.resolve(<AxiosResponse>{}));
+
+      await tokenService.reissueToken(req, 'atf-id');
+
+      expect(requestMock).toHaveBeenCalledWith(req, `${process.env.GENERATE_TOKEN_URL}?atfId=atf-id`, {});
+    });
+
+    it('should log errors', async () => {
+      const token = 'foo';
+      const req: Request = <Request> <unknown> { query: { token } };
+      const error: Error = new Error('oops!');
+      const errorString: string = JSON.stringify(error, Object.getOwnPropertyNames(error));
+      const requestMock = jest.spyOn(request, 'post');
+      requestMock.mockReturnValue(Promise.reject(error));
+
+      const result = await tokenService.reissueToken(req, 'atf-id');
+
+      expect(result).toStrictEqual({});
+      expect(logger.warn).toHaveBeenCalledWith(
+        req,
+        `Failed to generate new ATF [atf-id] token, error ${errorString}`,
+      );
     });
   });
 });

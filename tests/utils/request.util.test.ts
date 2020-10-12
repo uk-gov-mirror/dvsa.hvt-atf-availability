@@ -8,7 +8,7 @@ let apiRequestId: string;
 let awsRequestId: string;
 let requestMock: Request;
 
-describe('Test axios', () => {
+describe('Test request.util', () => {
   beforeAll(() => {
     url = 'http://test-url.com';
     apiRequestId = v4();
@@ -36,6 +36,17 @@ describe('Test axios', () => {
     const requestData = { foo: 'bar' };
 
     await request.put(requestMock, url, requestData);
+
+    expect(axiosMock).toHaveBeenCalledWith(url, requestData, expectedHeaders);
+  });
+
+  test('post() sends http request to correct url with expected data and headers', async () => {
+    const axiosMock = jest.spyOn(axios, 'post');
+    axiosMock.mockReturnValue(Promise.resolve({}));
+    const expectedHeaders = { headers: { 'X-Correlation-Id': awsRequestId } };
+    const requestData = { foo: 'bar' };
+
+    await request.post(requestMock, url, requestData);
 
     expect(axiosMock).toHaveBeenCalledWith(url, requestData, expectedHeaders);
   });

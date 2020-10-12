@@ -1,0 +1,30 @@
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+{% extends "layouts/layout.njk" %} 
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    {{ govukPanel({
+      titleText: "We have sent you an email",
+      attributes: { id: "email-panel" }
+    }) }}
+
+    <h2 class="govuk-heading-m">What happens next</h2>
+
+    <p class="govuk-body">Check your email and update your availability for 
+      <span class="govuk-!-font-weight-bold">
+        <span id="start-date">{{ atf.availability.startDate | formatDate }}</span> 
+        - 
+        <span id="end-date">{{ atf.availability.endDate | formatDate }}</span> 
+      </span>
+      using the links in your email.
+    </p>
+
+    <p class="govuk-body">We will email you again next week so you can update your availability for the following 4 weeks.</p>
+
+    {% include "includes/feedback.njk" %}
+  </div>
+</div>
+{% endblock %}
