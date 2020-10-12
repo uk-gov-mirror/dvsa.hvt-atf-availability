@@ -11,7 +11,11 @@ const get = async (req: Request, url: string): Promise<AxiosResponse> => axios.g
 // eslint-disable-next-line max-len
 const put = async (req: Request, url: string, data: unknown): Promise<AxiosResponse> => axios.put(url, data, getHeaders(req));
 
+// eslint-disable-next-line max-len
+const post = async (req: Request, url: string, data: unknown): Promise<AxiosResponse> => axios.post(url, data, getHeaders(req));
+
 export const request = {
   get,
   put,
+  post,
 };

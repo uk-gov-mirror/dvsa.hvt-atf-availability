@@ -1,6 +1,6 @@
 import { booleanHelper } from '../../src/utils/booleanHelper.util';
 
-describe('Test booleanHelper', () => {
+describe('Test booleanHelper.util', () => {
   describe('mapBooleanToYesNoString method', () => {
     it('should map true boolean to \'yes\' string', () => {
       expect(booleanHelper.mapBooleanToYesNoString(true)).toBe('yes');

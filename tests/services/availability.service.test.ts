@@ -9,6 +9,7 @@ import { logger } from '../../src/utils/logger.util';
 request.get = jest.fn();
 request.put = jest.fn();
 logger.info = jest.fn();
+logger.warn = jest.fn();
 logger.error = jest.fn();
 
 process.env = {
@@ -17,7 +18,7 @@ process.env = {
   DYNAMODB_ATF_TABLE_NAME: 'dynamodb-atf-table-name',
 };
 
-describe('Test availabilityService', () => {
+describe('Test availability.service', () => {
   let atf: AuthorisedTestingFacility;
 
   beforeEach(() => {
@@ -41,10 +42,18 @@ describe('Test availabilityService', () => {
       );
     });
 
-    it('should reject the promise when something went wrong', async () => {
-      (request.get as jest.Mock).mockReturnValue(Promise.reject(new Error('Ooops!')));
+    it('should return an empty atf and log an error when something went wrong', async () => {
+      const expectedError: Error = new Error('Ooops!');
+      const expectedErrorString: string = JSON.stringify(expectedError, Object.getOwnPropertyNames(expectedError));
+      (request.get as jest.Mock).mockReturnValue(Promise.reject(expectedError));
 
-      await expect(availabilityService.getAtf({} as Request, atf.id)).rejects.toEqual(new Error('Ooops!'));
+      const result = await availabilityService.getAtf({} as Request, atf.id);
+
+      expect(result).toStrictEqual({});
+      expect(logger.warn).toHaveBeenCalledWith(
+        {} as Request,
+        `Could not retrieve ATF [${atf.id}] details, error: ${expectedErrorString}`,
+      );
     });
   });
 
@@ -89,8 +98,9 @@ describe('Test availabilityService', () => {
       );
     });
 
-    it('should return an empty ATF and log error when error occured', async () => {
+    it('should return an empty ATF and log an error when something went wrong', async () => {
       const expectedError: Error = new Error('Ooops!');
+      const expectedErrorString: string = JSON.stringify(expectedError, Object.getOwnPropertyNames(expectedError));
       (request.put as jest.Mock).mockReturnValue(Promise.reject(expectedError));
 
       const result: AuthorisedTestingFacility = await availabilityService.updateAtfAvailability(
@@ -99,9 +109,9 @@ describe('Test availabilityService', () => {
       );
 
       expect(result).toStrictEqual({});
-      expect(logger.error).toHaveBeenCalledWith(
+      expect(logger.warn).toHaveBeenCalledWith(
         {} as Request,
-        `Could not update ATF availability, error: ${JSON.stringify(expectedError)}`,
+        `Could not update ATF [${tokenPayload.atfId}] details, error: ${expectedErrorString}`,
       );
     });
   });
