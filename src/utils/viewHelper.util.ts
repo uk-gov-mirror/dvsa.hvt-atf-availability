@@ -3,7 +3,7 @@ import { Express } from 'express';
 import { format, utcToZonedTime } from 'date-fns-tz';
 
 export const setUpNunjucks = (app: Express): Environment => {
-  const env = nunjucks.configure(['views', 'govuk-frontend'], {
+  const env = nunjucks.configure(['views'], {
     autoescape: true,
     express: app,
   }).addGlobal('NODE_ENV', process.env.NODE_ENV)
