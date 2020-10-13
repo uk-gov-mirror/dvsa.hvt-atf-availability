@@ -47,8 +47,7 @@ app.use(routes);
 
 // Error handling
 app.use((req: Request, res: Response, next: NextFunction) => {
-  const context = { error: 'Page not found' };
-  res.status(404).render('error/not-found', context);
+  res.status(404).render('error/not-found');
   next();
 });
 
