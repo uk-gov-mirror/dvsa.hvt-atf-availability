@@ -84,7 +84,7 @@ describe('Test availability.controller', () => {
 
       expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock);
       expect(statusMock).toHaveBeenCalledWith(404);
-      expect(renderMock).toHaveBeenCalledWith('error/not-found', { error: 'Invalid token' });
+      expect(renderMock).toHaveBeenCalledWith('error/service-unavailable');
     });
   });
 
@@ -157,7 +157,7 @@ describe('Test availability.controller', () => {
 
       expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock);
       expect(statusMock).toHaveBeenCalledWith(404);
-      expect(renderMock).toHaveBeenCalledWith('error/not-found', { error: 'Invalid token' });
+      expect(renderMock).toHaveBeenCalledWith('error/service-unavailable');
     });
   });
 
@@ -208,7 +208,7 @@ describe('Test availability.controller', () => {
 
       expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock, true);
       expect(statusMock).toHaveBeenCalledWith(404);
-      expect(renderMock).toHaveBeenCalledWith('error/not-found', { error: 'Invalid token' });
+      expect(renderMock).toHaveBeenCalledWith('error/service-unavailable');
     });
   });
 
@@ -256,7 +256,7 @@ describe('Test availability.controller', () => {
 
       expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock, true);
       expect(statusMock).toHaveBeenCalledWith(404);
-      expect(renderMock).toHaveBeenCalledWith('error/not-found', { error: 'Invalid token' });
+      expect(renderMock).toHaveBeenCalledWith('error/service-unavailable');
     });
   });
 });
