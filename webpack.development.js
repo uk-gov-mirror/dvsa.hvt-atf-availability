@@ -39,7 +39,7 @@ module.exports = {
         { from: './simple-proxy-api.yml', to: '.aws-sam/build/simple-proxy-api.yml' },
         { from: './.env', to: `.aws-sam/build/${lambdaName}/` },
         { from: './src/views', to: `.aws-sam/build/${lambdaName}/views` },
-        { from: './node_modules/govuk-frontend', to: `.aws-sam/build/${lambdaName}/govuk-frontend` },
+        { from: './node_modules/govuk-frontend', to: `.aws-sam/build/${lambdaName}/views/govuk-frontend` },
         { from: './node_modules/govuk-frontend/govuk/assets', to: `.aws-sam/build/${lambdaName}/public/assets` },
         { from: './node_modules/govuk-frontend/govuk/all.js', to: `.aws-sam/build/${lambdaName}/public/all.js` },
         { 
