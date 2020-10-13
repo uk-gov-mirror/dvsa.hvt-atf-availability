@@ -8,7 +8,7 @@
     "build:dev": "webpack-cli --config webpack.development.js",
     "start:dev": "sam local start-api -p 3002 --docker-network hvt-lambda-network"
   },
-  "contributers": [
+  "contributors": [
     {
       "name": "Shaun Hare",
       "email": "shaun.hare@dvsa.gov.uk"
@@ -56,5 +56,8 @@
     "uuid": "^8.3.0",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"
+  },
+  "engines": {
+    "node": "^12.18.4"
   }
 }
