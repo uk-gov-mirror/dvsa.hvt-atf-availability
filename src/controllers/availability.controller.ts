@@ -33,7 +33,7 @@ export const updateAvailability = async (req: Request, res: Response, next: Next
     }
 
     if (error instanceof InvalidTokenException) {
-      return res.status(404).render('error/service-unavailable');
+      return res.status(500).render('error/service-unavailable');
     }
 
     logger.error(req, `An unexpected error occured: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`);
@@ -56,7 +56,7 @@ export const confirmAvailability = async (req: Request, res: Response, next: Nex
     }
 
     if (error instanceof InvalidTokenException) {
-      return res.status(404).render('error/service-unavailable');
+      return res.status(500).render('error/service-unavailable');
     }
 
     logger.error(req, `An unexpected error occured: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`);
@@ -75,7 +75,7 @@ export const reissueToken = async (req: Request, res: Response, next: NextFuncti
     return res.redirect(302, buildRedirectUri('/availability/expired-token', req, retry));
   } catch (error) {
     if (error instanceof InvalidTokenException) {
-      return res.status(404).render('error/service-unavailable');
+      return res.status(500).render('error/service-unavailable');
     }
 
     logger.error(req, `An unexpected error occured: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`);
@@ -96,7 +96,7 @@ export const expiredToken = async (req: Request, res: Response, next: NextFuncti
     return res.render(template, { atf, token: tokenService.retrieveTokenFromQueryParams(req) });
   } catch (error) {
     if (error instanceof InvalidTokenException) {
-      return res.status(404).render('error/service-unavailable');
+      return res.status(500).render('error/service-unavailable');
     }
 
     logger.error(req, `An unexpected error occured: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`);
