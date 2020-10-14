@@ -73,7 +73,7 @@ describe('Test availability.controller', () => {
       );
     });
 
-    it('should call res.render() with 404 status when invalid token', async () => {
+    it('should call res.render() with 500 status when invalid token', async () => {
       const error: InvalidTokenException = new InvalidTokenException('oops!');
       const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
       extractTokenPayloadServiceMock.mockImplementation(() => { throw error; });
@@ -83,7 +83,7 @@ describe('Test availability.controller', () => {
       await updateAvailability(reqMock, resMock, nextMock);
 
       expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock);
-      expect(statusMock).toHaveBeenCalledWith(404);
+      expect(statusMock).toHaveBeenCalledWith(500);
       expect(renderMock).toHaveBeenCalledWith('error/service-unavailable');
     });
   });
@@ -106,7 +106,6 @@ describe('Test availability.controller', () => {
       expect(getAtfServiceMock).toHaveBeenCalledWith(reqMock, atfId);
       expect(renderMock).toHaveBeenCalledWith('availability-confirmation/yes', {
         atf: { id: atfId, availability: { isAvailable: true } },
-        undefined,
       });
     });
 
@@ -127,7 +126,6 @@ describe('Test availability.controller', () => {
       expect(getAtfServiceMock).toHaveBeenCalledWith(reqMock, atfId);
       expect(renderMock).toHaveBeenCalledWith('availability-confirmation/no', {
         atf: { id: atfId, availability: { isAvailable: false } },
-        undefined,
       });
     });
 
@@ -146,7 +144,7 @@ describe('Test availability.controller', () => {
       );
     });
 
-    it('should call res.render() with 404 status when invalid token', async () => {
+    it('should call res.render() with 500 status when invalid token', async () => {
       const error: InvalidTokenException = new InvalidTokenException('oops!');
       const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
       extractTokenPayloadServiceMock.mockImplementation(() => { throw error; });
@@ -156,7 +154,7 @@ describe('Test availability.controller', () => {
       await confirmAvailability(reqMock, resMock, nextMock);
 
       expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock);
-      expect(statusMock).toHaveBeenCalledWith(404);
+      expect(statusMock).toHaveBeenCalledWith(500);
       expect(renderMock).toHaveBeenCalledWith('error/service-unavailable');
     });
   });
@@ -197,7 +195,7 @@ describe('Test availability.controller', () => {
       );
     });
 
-    it('should call res.render() with 404 status when invalid token', async () => {
+    it('should call res.render() with 500 status when invalid token', async () => {
       const error: InvalidTokenException = new InvalidTokenException('oops!');
       const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
       extractTokenPayloadServiceMock.mockImplementation(() => { throw error; });
@@ -207,7 +205,7 @@ describe('Test availability.controller', () => {
       await reissueToken(reqMock, resMock, nextMock);
 
       expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock, true);
-      expect(statusMock).toHaveBeenCalledWith(404);
+      expect(statusMock).toHaveBeenCalledWith(500);
       expect(renderMock).toHaveBeenCalledWith('error/service-unavailable');
     });
   });
@@ -245,7 +243,7 @@ describe('Test availability.controller', () => {
       });
     });
 
-    it('should call res.render() with 404 status when invalid token', async () => {
+    it('should call res.render() with 500 status when invalid token', async () => {
       const error: InvalidTokenException = new InvalidTokenException('oops!');
       const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
       extractTokenPayloadServiceMock.mockImplementation(() => { throw error; });
@@ -255,7 +253,7 @@ describe('Test availability.controller', () => {
       await expiredToken(reqMock, resMock, nextMock);
 
       expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock, true);
-      expect(statusMock).toHaveBeenCalledWith(404);
+      expect(statusMock).toHaveBeenCalledWith(500);
       expect(renderMock).toHaveBeenCalledWith('error/service-unavailable');
     });
   });
