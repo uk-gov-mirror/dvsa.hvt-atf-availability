@@ -6,7 +6,7 @@
     "lint": "eslint '*/**/*.ts' --quiet --fix",
     "test": "jest --coverage",
     "build:dev": "webpack-cli --config webpack.development.js",
-    "start:dev": "sam local start-api -p 3002 --docker-network hvt-lambda-network"
+    "start:dev": "sam local start-api -p 3002 --docker-network hvt-network"
   },
   "contributors": [
     {
