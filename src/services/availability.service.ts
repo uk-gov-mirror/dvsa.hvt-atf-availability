@@ -1,9 +1,10 @@
 import { Request } from 'express';
 import { AxiosResponse } from 'axios';
-import { AuthorisedTestingFacility, Availability } from '../models/authorisedTestingFacility.model';
+import { AuthorisedTestingFacility } from '../models/authorisedTestingFacility.model';
 import { request } from '../utils/request.util';
 import { TokenPayload } from '../models/token.model';
 import { logger } from '../utils/logger.util';
+import { Availability } from '../models/availability.model';
 
 const getAtf = async (req: Request, id: string): Promise<AuthorisedTestingFacility> => {
   logger.info(req, `Retrieving ATF [${id}] details`);
