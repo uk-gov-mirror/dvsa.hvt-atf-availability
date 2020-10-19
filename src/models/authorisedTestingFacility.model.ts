@@ -7,8 +7,8 @@ export interface AuthorisedTestingFacility {
   name: string;
   phone: string;
   email: string;
-  address: Address,
-  geoLocation: GeoLocation
+  address: Address;
+  geoLocation: GeoLocation;
   availability: Availability;
   inclusions: string[];
   exclusions: string[];
