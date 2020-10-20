@@ -6,6 +6,7 @@
     "lint": "eslint '*/**/*.ts' --quiet --fix",
     "test": "jest --coverage",
     "build:dev": "webpack-cli --config webpack.development.js",
+    "build:prod": "webpack-cli --config webpack.production.js",
     "start:dev": "sam local start-api -p 3002 --docker-network hvt-network"
   },
   "contributors": [
@@ -44,9 +45,11 @@
     "@types/uuid": "^8.3.0",
     "aws-sam-webpack-plugin": "^0.6.0",
     "copy-webpack-plugin": "^6.1.0",
+    "css-minimizer-webpack-plugin": "^1.1.5",
     "eslint": "^7.6.0",
     "eslint-import-resolver-typescript": "^2.3.0",
     "jest": "^26.4.2",
+    "minify-bundled-webpack-plugin": "0.0.3",
     "node-sass": "^4.14.1",
     "sass-loader": "^8.0.0",
     "source-map-support": "^0.5.19",
@@ -55,7 +58,8 @@
     "typescript": "^3.9.7",
     "uuid": "^8.3.0",
     "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.12"
+    "webpack-cli": "^3.3.12",
+    "webpack-merge": "^5.2.0"
   },
   "engines": {
     "node": "^12.18.4"
