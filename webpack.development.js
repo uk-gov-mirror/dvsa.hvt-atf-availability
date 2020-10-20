@@ -1,5 +1,3 @@
-const path = require('path');
-const AwsSamPlugin = require('aws-sam-webpack-plugin');
 const { merge } = require('webpack-merge');
 const common = require('./webpack.common.js');
 
