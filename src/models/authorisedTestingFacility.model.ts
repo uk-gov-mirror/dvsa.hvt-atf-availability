@@ -7,6 +7,7 @@ export interface AuthorisedTestingFacility {
   name: string;
   phone: string;
   email: string;
+  url: string;
   address: Address;
   geoLocation: GeoLocation;
   availability: Availability;
