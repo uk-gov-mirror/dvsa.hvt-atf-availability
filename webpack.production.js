@@ -18,7 +18,7 @@ module.exports = merge(common, {
     }),
     {
       apply: (compiler) => {
-        compiler.hooks.afterEmit.tap('AfterEmitPlugin', async (compilation) => {
+        compiler.hooks.after.tap('packing-plugin', async (compilation) => {
           if (!fs.existsSync('./dist')) {
             fs.mkdirSync('./dist')
           };
