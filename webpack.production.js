@@ -11,10 +11,10 @@ const LAMBDA_NAME = 'HVT-ATF-AVAILABILITY';
 const BUILD_VERSION = branchName().replace("/","-");
 
 class ZipPlugin {
-  constructor(inputPath, outputPath, outputName) {
-    this.inputPath = inputPath;
-    this.outputPath = outputPath;
-    this.outputName = outputName;
+  constructor(params) {
+    this.inputPath = params.inputPath;
+    this.outputPath = params.outputPath;
+    this.outputName = params.outputName;
   }
 
   apply(compiler) {
@@ -22,7 +22,7 @@ class ZipPlugin {
       if (!fs.existsSync(this.outputPath)) {
         fs.mkdirSync(this.outputPath)
       };
-      const output = fs.createWriteStream(`${this.outputPath}/${LAMBDA_NAME}-${BUILD_VERSION}.zip`);
+      const output = fs.createWriteStream(`${this.outputPath}/${this.outputName}.zip`);
       const archive = archiver('zip');
 
       output.on('close', function () {
@@ -46,10 +46,11 @@ module.exports = merge(common, {
     new MinifyBundledPlugin({
       patterns: [`.aws-sam/**/*.js`],
     }),
-    new ZipPlugin(
-      `.aws-sam/build/${LAMBDA_NAME}`,
-      './dist', 
-      `${LAMBDA_NAME}-${BUILD_VERSION}.zip`)
+    new ZipPlugin({
+      inputPath: `./.aws-sam/build/${LAMBDA_NAME}`,
+      outputPath: `./dist`,
+      outputName: `${LAMBDA_NAME}-${BUILD_VERSION}`
+    })
   ],
   optimization: {
     minimizer: [
