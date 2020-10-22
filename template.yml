@@ -11,7 +11,7 @@ Resources:
       Variables:
         ServerlessExpressLambdaFunctionName: !Ref LambdaFunction
 
-  ATFAVAILABILITY:
+  LambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./src
