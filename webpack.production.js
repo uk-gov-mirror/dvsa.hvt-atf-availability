@@ -10,35 +10,46 @@ const MinifyBundledPlugin = require('minify-bundled-webpack-plugin');
 const LAMBDA_NAME = 'HVT-ATF-AVAILABILITY';
 const BUILD_VERSION = branchName().replace("/","-");
 
+class ZipPlugin {
+  constructor(inputPath, outputPath, outputName) {
+    this.inputPath = inputPath;
+    this.outputPath = outputPath;
+    this.outputName = outputName;
+  }
+
+  apply(compiler) {
+    compiler.hooks.afterEmit.tap('zip-pack-plugin', async (compilation) => {
+      if (!fs.existsSync(this.outputPath)) {
+        fs.mkdirSync(this.outputPath)
+      };
+      const output = fs.createWriteStream(`${this.outputPath}/${LAMBDA_NAME}-${BUILD_VERSION}.zip`);
+      const archive = archiver('zip');
+
+      output.on('close', function () {
+        console.log(archive.pointer() + ' total bytes');
+        console.log('archiver has been finalized and the output file descriptor has closed.');
+      });
+      archive.on('error', function(err){
+          throw err;
+      });
+         
+      archive.pipe(output);
+      archive.directory(`${this.inputPath}`, false);
+      archive.finalize();
+    });
+  }
+};
+
 module.exports = merge(common, {
   mode: 'production',
   plugins: [
     new MinifyBundledPlugin({
       patterns: [`.aws-sam/**/*.js`],
     }),
-    {
-      apply: (compiler) => {
-        compiler.hooks.afterEmit.tap('dist-pack-plugin', async (compilation) => {
-          if (!fs.existsSync('./dist')) {
-            fs.mkdirSync('./dist')
-          };
-          const output = fs.createWriteStream(`./dist/${LAMBDA_NAME}-${BUILD_VERSION}.zip`);
-          const archive = archiver('zip');
-
-          output.on('close', function () {
-            console.log(archive.pointer() + ' total bytes');
-            console.log('archiver has been finalized and the output file descriptor has closed.');
-          });
-          archive.on('error', function(err){
-              throw err;
-          });
-             
-          archive.pipe(output);
-          archive.directory(`.aws-sam/build/${LAMBDA_NAME}`, false);
-          archive.finalize();
-        });
-      }
-    }
+    new ZipPlugin(
+      `.aws-sam/build/${LAMBDA_NAME}`,
+      './dist', 
+      `${LAMBDA_NAME}-${BUILD_VERSION}.zip`)
   ],
   optimization: {
     minimizer: [
