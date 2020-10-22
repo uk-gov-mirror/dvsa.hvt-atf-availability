@@ -7,7 +7,7 @@ const branchName = require('current-git-branch');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const MinifyBundledPlugin = require('minify-bundled-webpack-plugin');
 
-const LAMBDA_NAME = 'HVT-ATF-AVAILABILITY';
+const LAMBDA_NAME = 'ATFAVAILABILITY';
 const BUILD_VERSION = branchName().replace("/","-");
 
 class ZipPlugin {
@@ -49,7 +49,7 @@ module.exports = merge(common, {
     new ZipPlugin({
       inputPath: `./.aws-sam/build/${LAMBDA_NAME}`,
       outputPath: `./dist`,
-      outputName: `${LAMBDA_NAME}-${BUILD_VERSION}`
+      outputName: `HVT-${LAMBDA_NAME}-${BUILD_VERSION}`
     })
   ],
   optimization: {
