@@ -6,10 +6,26 @@ const branchName = require('current-git-branch');
 
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const MinifyBundledPlugin = require('minify-bundled-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const LAMBDA_NAME = 'LambdaFunction';
+const OUTPUT_FOLDER = './dist'
 const OUTPUT_NAME = 'ATFAVAILABILITY';
 const BUILD_VERSION = branchName().replace("/","-");
+
+class RemoveDirectoryPlugin {
+  constructor(params) {
+    this.path = params.path;
+  }
+
+  apply(compiler) {
+    compiler.hooks.done.tap('remove-plugin', () => {
+      if (fs.existsSync(this.path)) {
+        fs.rmdirSync(this.path, { recursive: true })
+      }
+    })
+  }
+}
 
 class ZipPlugin {
   constructor(params) {
@@ -47,10 +63,18 @@ module.exports = merge(common, {
     new MinifyBundledPlugin({
       patterns: [`.aws-sam/**/*.js`],
     }),
+    new CopyPlugin({
+      patterns: [
+        { from: './.aws-sam/**', to: `${OUTPUT_FOLDER}` },
+      ]
+    }),
     new ZipPlugin({
       inputPath: `./.aws-sam/build/${LAMBDA_NAME}`,
-      outputPath: `./dist`,
+      outputPath: `${OUTPUT_FOLDER}`,
       outputName: `HVT-${OUTPUT_NAME}-${BUILD_VERSION}`
+    }),
+    new RemoveDirectoryPlugin({
+      path: './.aws-sam'
     })
   ],
   optimization: {
