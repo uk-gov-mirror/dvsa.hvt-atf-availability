@@ -9,9 +9,9 @@ Resources:
       DefinitionUri: ./simple-proxy-api.yml
       StageName: dev
       Variables:
-        ServerlessExpressLambdaFunctionName: !Ref LambdaFunction
+        ServerlessExpressLambdaFunctionName: !Ref AtfAvailabilityFunction
 
-  LambdaFunction:
+  AtfAvailabilityFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./src
