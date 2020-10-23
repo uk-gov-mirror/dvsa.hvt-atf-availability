@@ -13,7 +13,8 @@ const BUILD_VERSION = branchName().replace("/","-");
 
 class BundlePlugin {
   constructor(params) {
-    this.archives = params.archives
+    this.archives = params.archives;
+    this.assets = params.assets;
   }
 
   apply(compiler) {
@@ -21,7 +22,10 @@ class BundlePlugin {
       this.archives.forEach(async (archive) => {
         await this.createArchive(archive.inputPath, archive.outputPath, archive.outputName);
       })
-      fs.copySync('./.aws-sam', './dist/.aws-sam');
+
+      this.assets.forEach((asset) => {
+        fs.copySync(asset.inputPath, asset.outputPath);
+      })
     });
   }
 
@@ -41,7 +45,13 @@ class BundlePlugin {
     });
     
     archive.pipe(output);
-    archive.directory(`${inputPath}`, false);
+    archive.glob(
+      `**/*`, 
+      { 
+        cwd: inputPath,
+        skip: ['public'] 
+      }
+    );
     return archive.finalize();
   }
 };
@@ -55,9 +65,15 @@ module.exports = merge(common, {
     new BundlePlugin({
       archives: [
         {
-          inputPath: `./.aws-sam/build/${LAMBDA_NAME}`,
+          inputPath: `.aws-sam/build/${LAMBDA_NAME}`,
           outputPath: `${OUTPUT_FOLDER}`,
           outputName: `HVT-${LAMBDA_NAME}-${BUILD_VERSION}`
+        }
+      ],
+      assets: [
+        {
+          inputPath: `./.aws-sam/build/${LAMBDA_NAME}/public`,
+          outputPath: `${OUTPUT_FOLDER}/${LAMBDA_NAME}-cloudfront-assets-${BUILD_VERSION}`,
         }
       ]
     }),
