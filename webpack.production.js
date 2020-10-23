@@ -20,7 +20,7 @@ class BundlePlugin {
   apply(compiler) {
     compiler.hooks.afterEmit.tap('zip-pack-plugin', async (compilation) => {
       this.archives.forEach(async (archive) => {
-        await this.createArchive(archive.inputPath, archive.outputPath, archive.outputName);
+        await this.createArchive(archive.inputPath, archive.outputPath, archive.outputName, archive.ignore);
       })
 
       this.assets.forEach((asset) => {
@@ -29,7 +29,7 @@ class BundlePlugin {
     });
   }
 
-  createArchive(inputPath, outputPath, outputName) {
+  createArchive(inputPath, outputPath, outputName, ignore) {
     if (!fs.existsSync(outputPath)) {
       fs.mkdirSync(outputPath)
     };
@@ -49,7 +49,7 @@ class BundlePlugin {
       `**/*`, 
       { 
         cwd: inputPath,
-        skip: ['public'] 
+        skip: ignore
       }
     );
     return archive.finalize();
@@ -67,7 +67,8 @@ module.exports = merge(common, {
         {
           inputPath: `.aws-sam/build/${LAMBDA_NAME}`,
           outputPath: `${OUTPUT_FOLDER}`,
-          outputName: `HVT-${LAMBDA_NAME}-${BUILD_VERSION}`
+          outputName: `HVT-${LAMBDA_NAME}-${BUILD_VERSION}`,
+          ignore: ['public']
         }
       ],
       assets: [
