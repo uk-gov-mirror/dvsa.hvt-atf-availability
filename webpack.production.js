@@ -7,7 +7,7 @@ const branchName = require('current-git-branch');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const MinifyBundledPlugin = require('minify-bundled-webpack-plugin');
 
-const LAMBDA_NAME = 'ATFAVAILABILITY';
+const LAMBDA_NAME = 'AtfAvailabilityFunction';
 const OUTPUT_FOLDER = './dist'
 const BUILD_VERSION = branchName().replace("/","-");
 
