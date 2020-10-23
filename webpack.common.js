@@ -4,7 +4,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const sass = require('node-sass');
 
 const awsSamPlugin = new AwsSamPlugin({ vscodeDebug: false });
-const LAMBDA_NAME = 'LambdaFunction';
+const LAMBDA_NAME = 'ATFAVAILABILITY';
 
 module.exports = {
   entry: () => awsSamPlugin.entry(),
