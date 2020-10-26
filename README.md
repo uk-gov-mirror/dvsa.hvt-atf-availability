@@ -1,39 +1,54 @@
 # hvt-atf-availability
 
-A Serverless Node Express application for ATF availability.
+A Serverless Node Express lambda (AtfAvailabilityFunction) for updating ATF availability.
 
 
-**Requirements**
+## Requirements
 
-- node [v12.18.4](https://nodejs.org/en/download/releases/)
+- [node v12.18.4](https://nodejs.org/en/download/releases/)
 - [Docker](https://www.docker.com/get-started)
 - [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
 
 
-**Run Locally**
+## Run Locally
 
-- `npm i`
-- `cp .env.development .env`
-- `npm run build:dev`
-- `npm run start:dev`
-- go to `http://localhost:3002/` on browser
-
-
-**Debug Lambdas Locally (VS Code only)**
-
-- Run lambdas in debug mode: `npm run start:dev -- -d 5858`
-- Add a breakpoint to the lambda being tested (`src/controllers/index.controller.ts`)
-- Run the debug config from VS Code that corresponds to lambda being tested (`LambdaFunction`)
-- Send an HTTP request to the lambda's URI (`curl --request GET localhost:3002`)
+1. Follow build steps in [hvt-data](https://gitlab.motdev.org.uk/hvtesting/hvt-data/) to prepare local dataset
+1. [hvt-read-api](https://gitlab.motdev.org.uk/hvtesting/hvt-read-api/) and [hvt-write-api](https://gitlab.motdev.org.uk/hvtesting/hvt-write-api/)  must be running
+1. Follow build steps in [hvt-token-generator](https://gitlab.motdev.org.uk/hvtesting/hvt-data/) to generate ATF tokens
+1. `npm i`
+1. `cp .env.development .env`
+1. `npm run build:dev`
+1. `npm run start:dev`
+1. Go to `http://localhost:3002/availability/update?token=<TOKEN_GENERATED_FROM_hvt-token-generator>` on browser
+    - unique tokens for ATFs can be found on the DB
 
 
-**Test Locally**
-- `npm test`
-- code coverage is output to console and stored in `/coverage/`
-    - settings can be configured in `jest.config.js`
+## Debug Locally (VS Code only)
+
+1. Run lambdas in debug mode: `npm run start:dev -- -d 5858`
+1. Add a breakpoint to the lambda being tested (`src/controllers/availability.controller.ts`)
+1. Run the debug config from VS Code that corresponds to lambda being tested (`AtfAvailabilityFunction`)
+1. Go to `http://localhost:3002/update?token=<TOKEN_GENERATED_FROM_HVT-TOKEN-GENERATOR>` on browser
+    - unique tokens for ATFs can be found on the DB
 
 
-**Logging**
+## Tests
+
+- The [Jest](https://jestjs.io/) framework is used to run tests and collect code coverage
+- To run the tests, run the following command within the root directory of the project: `npm test`
+- Coverage results will be displayed on terminal and stored in the `coverage` directory
+    - The coverage requirements can be set in `jest.config.js`
+
+
+## Build for Production
+
+1. `npm i`
+1. add environment variables to `.env`
+1. `npm run build:prod`
+1.  Zip file and minified assets and can be found in `./dist/`
+
+
+## Logging
 
 By using a utility wrapper (`src/util/logger`) surrounding `console.log`, the `awsRequestId` and a "correlation ID" is output with every debug/info/warn/error message.
 
