@@ -26,10 +26,10 @@ export const updateAvailability = async (req: Request, res: Response, next: Next
     const tokenPayload: TokenPayload = tokenService.extractTokenPayload(req);
     await availabilityService.updateAtfAvailability(req, tokenPayload);
 
-    return res.redirect(302, buildRedirectUri('/availability/confirm', req));
+    return res.redirect(302, buildRedirectUri('/confirm', req));
   } catch (error) {
     if (error instanceof ExpiredTokenException) {
-      return res.redirect(302, buildRedirectUri('/availability/reissue-token', req));
+      return res.redirect(302, buildRedirectUri('/reissue-token', req));
     }
 
     if (error instanceof InvalidTokenException) {
@@ -52,7 +52,7 @@ export const confirmAvailability = async (req: Request, res: Response, next: Nex
     return res.render(`availability-confirmation/${templateName}`, { atf });
   } catch (error) {
     if (error instanceof ExpiredTokenException) {
-      return res.redirect(302, buildRedirectUri('/availability/reissue-token', req));
+      return res.redirect(302, buildRedirectUri('/reissue-token', req));
     }
 
     if (error instanceof InvalidTokenException) {
@@ -72,7 +72,7 @@ export const reissueToken = async (req: Request, res: Response, next: NextFuncti
     await tokenService.reissueToken(req, tokenPayload.atfId);
 
     const retry: boolean = (req.query?.retry === 'true');
-    return res.redirect(302, buildRedirectUri('/availability/expired-token', req, retry));
+    return res.redirect(302, buildRedirectUri('/expired-token', req, retry));
   } catch (error) {
     if (error instanceof InvalidTokenException) {
       return res.status(500).render('error/service-unavailable');
@@ -103,3 +103,7 @@ export const expiredToken = async (req: Request, res: Response, next: NextFuncti
     return next(error);
   }
 };
+
+export const privacy = (req: Request, res: Response) => res.render('index/privacy');
+
+export const accessibility = (req: Request, res: Response) => res.render('index/accessibility');
