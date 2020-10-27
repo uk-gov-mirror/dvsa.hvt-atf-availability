@@ -3,7 +3,8 @@ import { Request, NextFunction, Response } from 'express';
 import { AxiosResponse } from 'axios';
 import {
   reissueToken, expiredToken, updateAvailability, confirmAvailability,
-} from '../../src/controllers/availability.controller';
+  accessibility, privacy,
+} from '../../src/controllers/index.controller';
 import { tokenService } from '../../src/services/token.service';
 import { TokenPayload } from '../../src/models/token.model';
 import { availabilityService } from '../../src/services/availability.service';
@@ -54,7 +55,7 @@ describe('Test availability.controller', () => {
       expect(updateAtfServiceMock).toHaveBeenCalledWith(reqMock, { atfId });
       expect(redirectMock).toHaveBeenCalledWith(
         302,
-        `/availability/confirm?token=${token}&correlationId=${correlationId}`,
+        `/confirm?token=${token}&correlationId=${correlationId}`,
       );
     });
 
@@ -69,7 +70,7 @@ describe('Test availability.controller', () => {
       expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock);
       expect(redirectMock).toHaveBeenCalledWith(
         302,
-        `/availability/reissue-token?token=${token}&correlationId=${correlationId}`,
+        `/reissue-token?token=${token}&correlationId=${correlationId}`,
       );
     });
 
@@ -140,7 +141,7 @@ describe('Test availability.controller', () => {
       expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock);
       expect(redirectMock).toHaveBeenCalledWith(
         302,
-        `/availability/reissue-token?token=${token}&correlationId=${correlationId}`,
+        `/reissue-token?token=${token}&correlationId=${correlationId}`,
       );
     });
 
@@ -173,7 +174,7 @@ describe('Test availability.controller', () => {
       expect(reissueTokenServiceMock).toHaveBeenCalledWith(reqMock, atfId);
       expect(redirectMock).toHaveBeenCalledWith(
         302,
-        `/availability/expired-token?token=${token}&correlationId=${correlationId}`,
+        `/expired-token?token=${token}&correlationId=${correlationId}`,
       );
     });
 
@@ -191,7 +192,7 @@ describe('Test availability.controller', () => {
       expect(reissueTokenServiceMock).toHaveBeenCalledWith(reqMock, atfId);
       expect(redirectMock).toHaveBeenCalledWith(
         302,
-        `/availability/expired-token?token=${token}&correlationId=${correlationId}&retry=true`,
+        `/expired-token?token=${token}&correlationId=${correlationId}&retry=true`,
       );
     });
 
@@ -255,6 +256,26 @@ describe('Test availability.controller', () => {
       expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock, true);
       expect(statusMock).toHaveBeenCalledWith(500);
       expect(renderMock).toHaveBeenCalledWith('error/service-unavailable');
+    });
+  });
+
+  describe('privacy method', () => {
+    it('should render index/privacy page', () => {
+      const renderMock = jest.spyOn(resMock, 'render');
+
+      privacy(reqMock, resMock);
+
+      expect(renderMock).toHaveBeenCalledWith('index/privacy');
+    });
+  });
+
+  describe('accessibility method', () => {
+    it('should render index/accessibility page', () => {
+      const renderMock = jest.spyOn(resMock, 'render');
+
+      accessibility(reqMock, resMock);
+
+      expect(renderMock).toHaveBeenCalledWith('index/accessibility');
     });
   });
 });

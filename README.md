@@ -19,14 +19,14 @@ A Serverless Node Express lambda (AtfAvailabilityFunction) for updating ATF avai
 1. `cp .env.development .env`
 1. `npm run build:dev`
 1. `npm run start:dev`
-1. Go to `http://localhost:3002/availability/update?token=<TOKEN_GENERATED_FROM_hvt-token-generator>` on browser
+1. Go to `http://localhost:3002/update?token=<TOKEN_GENERATED_FROM_hvt-token-generator>` on browser
     - unique tokens for ATFs can be found on the DB
 
 
 ## Debug Locally (VS Code only)
 
 1. Run lambdas in debug mode: `npm run start:dev -- -d 5858`
-1. Add a breakpoint to the lambda being tested (`src/controllers/availability.controller.ts`)
+1. Add a breakpoint to the lambda being tested (`src/controllers/index.controller.ts`)
 1. Run the debug config from VS Code that corresponds to lambda being tested (`AtfAvailabilityFunction`)
 1. Go to `http://localhost:3002/update?token=<TOKEN_GENERATED_FROM_HVT-TOKEN-GENERATOR>` on browser
     - unique tokens for ATFs can be found on the DB
