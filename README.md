@@ -12,11 +12,11 @@ A Serverless Node Express lambda (AtfAvailabilityFunction) for updating ATF avai
 
 ## Run Locally
 
-1. Follow build steps in [hvt-data](https://gitlab.motdev.org.uk/hvtesting/hvt-data/) to prepare local dataset
+1. Follow build steps in [hvt-data](https://gitlab.motdev.org.uk/hvtesting/hvt-data/) to prepare local dataset and to generate the `KMS_KEY_ID` and an encrypted `JWT_SECRET`
 1. [hvt-read-api](https://gitlab.motdev.org.uk/hvtesting/hvt-read-api/) and [hvt-write-api](https://gitlab.motdev.org.uk/hvtesting/hvt-write-api/)  must be running
 1. Follow build steps in [hvt-token-generator](https://gitlab.motdev.org.uk/hvtesting/hvt-data/) to generate ATF tokens
 1. `npm i`
-1. `cp .env.development .env`
+1. `cp .env.development .env` (be sure to add the `KMS_KEY_ID` and `JWT_SECRET` variables - they can be created in `hvt-data`)
 1. `npm run build:dev`
 1. `npm run start:dev`
 1. Go to `http://localhost:3002/update?token=<TOKEN_GENERATED_FROM_hvt-token-generator>` on browser
