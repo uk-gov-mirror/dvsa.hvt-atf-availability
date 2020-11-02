@@ -10,6 +10,7 @@ import dotenv from 'dotenv';
 import { setUpNunjucks } from './utils/viewHelper.util';
 import assetRoute from './routes/asset.route';
 import indexRoute from './routes/index.route';
+import { decryptJwtSecret } from './services/token.service';
 
 // Load environment variables
 dotenv.config();
@@ -40,6 +41,14 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
   req.app.locals.correlationId = correlationId;
   next();
+});
+app.use(async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    req.app.locals.jwtSecret = await decryptJwtSecret(req);
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Routes

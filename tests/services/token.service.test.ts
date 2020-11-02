@@ -1,8 +1,9 @@
+import AWS from 'aws-sdk';
 import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 import { AxiosResponse } from 'axios';
 import { TokenPayload } from '../../src/models/token.model';
-import { tokenService } from '../../src/services/token.service';
+import { decryptJwtSecret, tokenService } from '../../src/services/token.service';
 import { logger } from '../../src/utils/logger.util';
 import { ExpiredTokenException } from '../../src/exceptions/expiredToken.exception';
 import { InvalidTokenException } from '../../src/exceptions/invalidToken.exception';
@@ -13,14 +14,47 @@ import {
   getJwtSecret,
 } from '../data-providers/token.dataProvider';
 
+process.env.GENERATE_TOKEN_URL = 'http://generate-token-url.gov';
+process.env.KMS_KEY_ID = 'some-key-id';
+process.env.JWT_SECRET = 'dmVyeSB2ZXJ5IHNlY3JldA==';
+process.env.AWS_REGION = 'some-aws-region';
+process.env.AWS_ENDPOINT = 'some-aws-endpoint';
+
 logger.warn = jest.fn();
 logger.info = jest.fn();
-process.env.JWT_SECRET = getJwtSecret();
-process.env.GENERATE_TOKEN_URL = 'http://generate-token-url.gov';
+
+const jwtSecret = getJwtSecret();
+const reqMock = <Request> <unknown> {
+  apiGateway: { event: { requestContext: { requestId: 'apiRequestId' } } },
+  app: { locals: { correlationId: 'correlationId' } },
+  query: { token: 'token' },
+};
+const decryptMock = jest.fn(() => ({
+  promise: jest.fn().mockResolvedValue({ Plaintext: 'some-plaintext' }),
+}));
+jest.mock('aws-sdk', () => ({
+  KMS: jest.fn().mockImplementation(() => ({
+    decrypt: decryptMock,
+  })),
+}));
 
 describe('Test token.service', () => {
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe('decryptJwtSecret()', () => {
+    test('decrypts the secret', async () => {
+      const utf8EncodedDecryptedSecret = 'very very secret';
+
+      await decryptJwtSecret(reqMock);
+
+      expect(decryptMock).toHaveBeenCalledTimes(1);
+      expect(decryptMock).toHaveBeenCalledWith({
+        KeyId: process.env.KMS_KEY_ID,
+        CiphertextBlob: Buffer.from(utf8EncodedDecryptedSecret),
+      });
+    });
   });
 
   describe('extractTokenPayload method', () => {
@@ -34,7 +68,10 @@ describe('Test token.service', () => {
 
     it('should throw ExpiredTokenException when expired token provided', () => {
       const expiredToken: string = getExpiredYesToken();
-      const req: Request = <Request> <unknown> { query: { token: expiredToken } };
+      const req: Request = <Request> <unknown> {
+        query: { token: expiredToken },
+        app: { locals: { jwtSecret: 'secret' } },
+      };
 
       expect(() => tokenService.extractTokenPayload(req))
         .toThrow(new ExpiredTokenException(`Token [${expiredToken}] is expired`));
@@ -51,7 +88,10 @@ describe('Test token.service', () => {
     });
 
     it('should return properly decoded token payload data when valid token provided', () => {
-      const req: Request = <Request> <unknown> { query: { token: 'foo' } };
+      const req: Request = <Request> <unknown> {
+        query: { token: 'foo' },
+        app: { locals: { jwtSecret } },
+      };
       jwt.verify = jest.fn();
       (jwt.verify as jest.Mock).mockImplementation(() => ({
         sub: 'atf-id-sample',
@@ -68,15 +108,17 @@ describe('Test token.service', () => {
         startDate: '2020-10-05T13:06:52.000Z',
         endDate: '2020-10-05T13:07:00.000Z',
       });
-      expect(logger.info).toBeCalledWith(req, 'Successfully decoded token');
     });
 
-    it('should return properly decoded token payload data when when expired tokens are ignored', () => {
+    it('should return properly decoded token payload data when expired tokens are ignored', () => {
       // this is for the purpose of extracting ATF ID from an expired token (so that a new one can be requested)
       const expiredToken: string = getExpiredYesToken();
-      const req: Request = <Request> <unknown> { query: { token: expiredToken } };
+      const req: Request = <Request> <unknown> {
+        query: { token: expiredToken },
+        app: { locals: { jwtSecret } },
+      };
 
-      const result: TokenPayload = tokenService.extractTokenPayload(req);
+      const result: TokenPayload = tokenService.extractTokenPayload(req, true);
 
       expect(result).toStrictEqual({
         atfId: 'atf-id-sample',
@@ -84,7 +126,6 @@ describe('Test token.service', () => {
         startDate: '2020-10-05T13:06:52.000Z',
         endDate: '2020-10-05T13:07:00.000Z',
       });
-      expect(logger.info).toBeCalledWith(req, 'Successfully decoded token');
     });
   });
 
