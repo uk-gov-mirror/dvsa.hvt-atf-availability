@@ -7,6 +7,7 @@ import { tokenService } from '../services/token.service';
 import { TokenPayload } from '../models/token.model';
 import { ExpiredTokenException } from '../exceptions/expiredToken.exception';
 import { InvalidTokenException } from '../exceptions/invalidToken.exception';
+import { ATFOperationException } from '../exceptions/atfOperation.exception';
 
 const buildRedirectUri = (baseUri: string, req: Request, retry = false) : string => {
   const tokenParam = `?token=${tokenService.retrieveTokenFromQueryParams(req)}`;
@@ -23,7 +24,7 @@ export const updateAvailability = async (req: Request, res: Response, next: Next
   logger.info(req, 'Handling update ATF availability request');
 
   try {
-    const tokenPayload: TokenPayload = tokenService.extractTokenPayload(req);
+    const tokenPayload: TokenPayload = await tokenService.extractTokenPayload(req);
     await availabilityService.updateAtfAvailability(req, tokenPayload);
 
     return res.redirect(302, buildRedirectUri('/confirm', req));
@@ -32,11 +33,10 @@ export const updateAvailability = async (req: Request, res: Response, next: Next
       return res.redirect(302, buildRedirectUri('/reissue-token', req));
     }
 
-    if (error instanceof InvalidTokenException) {
+    if (error instanceof InvalidTokenException || error instanceof ATFOperationException) {
       return res.status(500).render('error/service-unavailable');
     }
 
-    logger.error(req, `An unexpected error occured: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`);
     return next(error);
   }
 };
@@ -45,7 +45,7 @@ export const confirmAvailability = async (req: Request, res: Response, next: Nex
   logger.info(req, 'Handling confirm ATF availability request');
 
   try {
-    const tokenPayload: TokenPayload = tokenService.extractTokenPayload(req);
+    const tokenPayload: TokenPayload = await tokenService.extractTokenPayload(req);
     const atf: AuthorisedTestingFacility = await availabilityService.getAtf(req, tokenPayload.atfId);
     const templateName: string = booleanHelper.mapBooleanToYesNoString(atf.availability.isAvailable);
 
@@ -55,11 +55,10 @@ export const confirmAvailability = async (req: Request, res: Response, next: Nex
       return res.redirect(302, buildRedirectUri('/reissue-token', req));
     }
 
-    if (error instanceof InvalidTokenException) {
+    if (error instanceof InvalidTokenException || error instanceof ATFOperationException) {
       return res.status(500).render('error/service-unavailable');
     }
 
-    logger.error(req, `An unexpected error occured: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`);
     return next(error);
   }
 };
@@ -68,7 +67,7 @@ export const reissueToken = async (req: Request, res: Response, next: NextFuncti
   logger.info(req, 'Handling ATF reissue token request');
 
   try {
-    const tokenPayload: TokenPayload = tokenService.extractTokenPayload(req, true);
+    const tokenPayload: TokenPayload = await tokenService.extractTokenPayload(req, true);
     await tokenService.reissueToken(req, tokenPayload.atfId);
 
     const retry: boolean = (req.query?.retry === 'true');
@@ -78,7 +77,6 @@ export const reissueToken = async (req: Request, res: Response, next: NextFuncti
       return res.status(500).render('error/service-unavailable');
     }
 
-    logger.error(req, `An unexpected error occured: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`);
     return next(error);
   }
 };
@@ -87,7 +85,7 @@ export const expiredToken = async (req: Request, res: Response, next: NextFuncti
   logger.info(req, 'Handling ATF expired token request');
 
   try {
-    const tokenPayload: TokenPayload = tokenService.extractTokenPayload(req, true);
+    const tokenPayload: TokenPayload = await tokenService.extractTokenPayload(req, true);
     const atf: AuthorisedTestingFacility = await availabilityService.getAtf(req, tokenPayload.atfId);
 
     const retry: boolean = (req.query?.retry === 'true');
@@ -95,11 +93,10 @@ export const expiredToken = async (req: Request, res: Response, next: NextFuncti
 
     return res.render(template, { atf, token: tokenService.retrieveTokenFromQueryParams(req) });
   } catch (error) {
-    if (error instanceof InvalidTokenException) {
+    if (error instanceof InvalidTokenException || error instanceof ATFOperationException) {
       return res.status(500).render('error/service-unavailable');
     }
 
-    logger.error(req, `An unexpected error occured: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`);
     return next(error);
   }
 };
