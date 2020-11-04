@@ -5,6 +5,7 @@ import { request } from '../utils/request.util';
 import { TokenPayload } from '../models/token.model';
 import { logger } from '../utils/logger.util';
 import { Availability } from '../models/availability.model';
+import { ATFOperationException } from '../exceptions/atfOperation.exception';
 
 const getAtf = async (req: Request, id: string): Promise<AuthorisedTestingFacility> => {
   logger.info(req, `Retrieving ATF [${id}] details`);
@@ -16,9 +17,8 @@ const getAtf = async (req: Request, id: string): Promise<AuthorisedTestingFacili
     .then((response: AxiosResponse<AuthorisedTestingFacility>) => response.data)
     .catch((error) => {
       const errorString: string = JSON.stringify(error, Object.getOwnPropertyNames(error));
-      logger.warn(req, `Could not retrieve ATF [${id}] details, error: ${errorString}`);
-
-      return <AuthorisedTestingFacility> {};
+      logger.warn(req, `Failed to retrieve ATF [${id}] details, error: ${errorString}`);
+      throw new ATFOperationException();
     });
 };
 const updateAtfAvailability = async (req: Request, tokenPayload: TokenPayload): Promise<AuthorisedTestingFacility> => {
@@ -41,9 +41,8 @@ const updateAtfAvailability = async (req: Request, tokenPayload: TokenPayload): 
     .then((response: AxiosResponse<AuthorisedTestingFacility>) => response.data)
     .catch((error) => {
       const errorString: string = JSON.stringify(error, Object.getOwnPropertyNames(error));
-      logger.warn(req, `Could not update ATF [${tokenPayload.atfId}] details, error: ${errorString}`);
-
-      return <AuthorisedTestingFacility> {};
+      logger.warn(req, `Failed to update ATF [${tokenPayload.atfId}] availability, error: ${errorString}`);
+      throw new ATFOperationException();
     });
 };
 

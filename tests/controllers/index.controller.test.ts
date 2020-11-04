@@ -11,6 +11,7 @@ import { availabilityService } from '../../src/services/availability.service';
 import { AuthorisedTestingFacility } from '../../src/models/authorisedTestingFacility.model';
 import { InvalidTokenException } from '../../src/exceptions/invalidToken.exception';
 import { ExpiredTokenException } from '../../src/exceptions/expiredToken.exception';
+import { ATFOperationException } from '../../src/exceptions/atfOperation.exception';
 
 let apiRequestId: string;
 let awsRequestId: string;
@@ -44,7 +45,7 @@ describe('Test availability.controller', () => {
   describe('updateAvailability method', () => {
     it('should call res.redirect() to confirm with proper params', async () => {
       const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
-      extractTokenPayloadServiceMock.mockReturnValue(<TokenPayload> <unknown> { atfId });
+      extractTokenPayloadServiceMock.mockReturnValue(Promise.resolve(<TokenPayload> <unknown> { atfId }));
       const updateAtfServiceMock = jest.spyOn(availabilityService, 'updateAtfAvailability');
       updateAtfServiceMock.mockReturnValue(Promise.resolve(<AuthorisedTestingFacility> <unknown> { id: atfId }));
       const redirectMock = jest.spyOn(resMock, 'redirect');
@@ -87,12 +88,41 @@ describe('Test availability.controller', () => {
       expect(statusMock).toHaveBeenCalledWith(500);
       expect(renderMock).toHaveBeenCalledWith('error/service-unavailable');
     });
+
+    it('should call res.render() with 500 status when atf is not found', async () => {
+      const error: ATFOperationException = new ATFOperationException();
+      const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
+      extractTokenPayloadServiceMock.mockReturnValue(Promise.resolve(<TokenPayload> {}));
+      const updateAtfAvailabilityServiceMock = jest.spyOn(availabilityService, 'updateAtfAvailability');
+      updateAtfAvailabilityServiceMock.mockImplementation(() => { throw error; });
+      const statusMock = jest.spyOn(resMock, 'status');
+      const renderMock = jest.spyOn(resMock, 'render');
+
+      await updateAvailability(reqMock, resMock, nextMock);
+
+      expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock);
+      expect(statusMock).toHaveBeenCalledWith(500);
+      expect(renderMock).toHaveBeenCalledWith('error/service-unavailable');
+    });
+
+    it('should call next(error) when unhandled error', async () => {
+      const error: Error = new Error('Oops!');
+      const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
+      extractTokenPayloadServiceMock.mockReturnValue(Promise.resolve(<TokenPayload> {}));
+      const updateAtfAvailabilityServiceMock = jest.spyOn(availabilityService, 'updateAtfAvailability');
+      updateAtfAvailabilityServiceMock.mockImplementation(() => { throw error; });
+
+      await updateAvailability(reqMock, resMock, nextMock);
+
+      expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock);
+      expect(nextMock).toHaveBeenCalledWith(error);
+    });
   });
 
   describe('confirmAvailability method', () => {
     it('should call res.render() with proper params when specifying `yes` for isAvailable', async () => {
       const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
-      extractTokenPayloadServiceMock.mockReturnValue(<TokenPayload> <unknown> { atfId });
+      extractTokenPayloadServiceMock.mockReturnValue(Promise.resolve(<TokenPayload> <unknown> { atfId }));
       const getAtfServiceMock = jest.spyOn(availabilityService, 'getAtf');
       getAtfServiceMock.mockReturnValue(
         Promise.resolve(
@@ -112,7 +142,7 @@ describe('Test availability.controller', () => {
 
     it('should call res.render() with proper params when specifying `no` for isAvailable', async () => {
       const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
-      extractTokenPayloadServiceMock.mockReturnValue(<TokenPayload> <unknown> { atfId });
+      extractTokenPayloadServiceMock.mockReturnValue(Promise.resolve(<TokenPayload> <unknown> { atfId }));
       const getAtfServiceMock = jest.spyOn(availabilityService, 'getAtf');
       getAtfServiceMock.mockReturnValue(
         Promise.resolve(
@@ -158,12 +188,41 @@ describe('Test availability.controller', () => {
       expect(statusMock).toHaveBeenCalledWith(500);
       expect(renderMock).toHaveBeenCalledWith('error/service-unavailable');
     });
+
+    it('should call res.render() with 500 status when atf is not found', async () => {
+      const error: ATFOperationException = new ATFOperationException();
+      const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
+      extractTokenPayloadServiceMock.mockReturnValue(Promise.resolve(<TokenPayload> {}));
+      const getAtfAvailabilityServiceMock = jest.spyOn(availabilityService, 'getAtf');
+      getAtfAvailabilityServiceMock.mockImplementation(() => { throw error; });
+      const statusMock = jest.spyOn(resMock, 'status');
+      const renderMock = jest.spyOn(resMock, 'render');
+
+      await confirmAvailability(reqMock, resMock, nextMock);
+
+      expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock);
+      expect(statusMock).toHaveBeenCalledWith(500);
+      expect(renderMock).toHaveBeenCalledWith('error/service-unavailable');
+    });
+
+    it('should call next(error) when unhandled error', async () => {
+      const error: Error = new Error('Oops!');
+      const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
+      extractTokenPayloadServiceMock.mockReturnValue(Promise.resolve(<TokenPayload> {}));
+      const getAtfAvailabilityServiceMock = jest.spyOn(availabilityService, 'getAtf');
+      getAtfAvailabilityServiceMock.mockImplementation(() => { throw error; });
+
+      await confirmAvailability(reqMock, resMock, nextMock);
+
+      expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock);
+      expect(nextMock).toHaveBeenCalledWith(error);
+    });
   });
 
   describe('reissueToken method', () => {
     it('should call res.redirect() with proper params', async () => {
       const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
-      extractTokenPayloadServiceMock.mockReturnValue(<TokenPayload> <unknown> { atfId });
+      extractTokenPayloadServiceMock.mockReturnValue(Promise.resolve(<TokenPayload> <unknown> { atfId }));
       const reissueTokenServiceMock = jest.spyOn(tokenService, 'reissueToken');
       reissueTokenServiceMock.mockReturnValue(Promise.resolve(<AxiosResponse> {}));
       const redirectMock = jest.spyOn(resMock, 'redirect');
@@ -181,7 +240,7 @@ describe('Test availability.controller', () => {
     it('retry - should call res.redirect() with proper params', async () => {
       reqMock.query.retry = 'true';
       const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
-      extractTokenPayloadServiceMock.mockReturnValue(<TokenPayload> <unknown> { atfId });
+      extractTokenPayloadServiceMock.mockReturnValue(Promise.resolve(<TokenPayload> <unknown> { atfId }));
       const reissueTokenServiceMock = jest.spyOn(tokenService, 'reissueToken');
       reissueTokenServiceMock.mockReturnValue(Promise.resolve(<AxiosResponse> {}));
       const redirectMock = jest.spyOn(resMock, 'redirect');
@@ -209,12 +268,23 @@ describe('Test availability.controller', () => {
       expect(statusMock).toHaveBeenCalledWith(500);
       expect(renderMock).toHaveBeenCalledWith('error/service-unavailable');
     });
+
+    it('should call next(error) when unhandled error', async () => {
+      const error: Error = new Error('oops!');
+      const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
+      extractTokenPayloadServiceMock.mockImplementation(() => { throw error; });
+
+      await reissueToken(reqMock, resMock, nextMock);
+
+      expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock, true);
+      expect(nextMock).toHaveBeenCalledWith(error);
+    });
   });
 
   describe('expiredToken method', () => {
     it('should call res.render() with proper params', async () => {
       const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
-      extractTokenPayloadServiceMock.mockReturnValue(<TokenPayload> <unknown> { atfId });
+      extractTokenPayloadServiceMock.mockReturnValue(Promise.resolve(<TokenPayload> <unknown> { atfId }));
       const getAtfServiceMock = jest.spyOn(availabilityService, 'getAtf');
       getAtfServiceMock.mockReturnValue(Promise.resolve(<AuthorisedTestingFacility> <unknown> { id: atfId }));
       const renderMock = jest.spyOn(resMock, 'render');
@@ -229,7 +299,7 @@ describe('Test availability.controller', () => {
     it('retry - should call res.render() with proper params', async () => {
       reqMock.query.retry = 'true';
       const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
-      extractTokenPayloadServiceMock.mockReturnValue(<TokenPayload> <unknown> { atfId });
+      extractTokenPayloadServiceMock.mockReturnValue(Promise.resolve(<TokenPayload> <unknown> { atfId }));
       const getAtfServiceMock = jest.spyOn(availabilityService, 'getAtf');
       getAtfServiceMock.mockReturnValue(Promise.resolve(<AuthorisedTestingFacility> <unknown> { id: atfId }));
       const renderMock = jest.spyOn(resMock, 'render');
@@ -256,6 +326,33 @@ describe('Test availability.controller', () => {
       expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock, true);
       expect(statusMock).toHaveBeenCalledWith(500);
       expect(renderMock).toHaveBeenCalledWith('error/service-unavailable');
+    });
+
+    it('should call res.render() with 500 status when atf is not found', async () => {
+      const error: ATFOperationException = new ATFOperationException();
+      const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
+      extractTokenPayloadServiceMock.mockReturnValue(Promise.resolve(<TokenPayload> {}));
+      const getAtfAvailabilityServiceMock = jest.spyOn(availabilityService, 'getAtf');
+      getAtfAvailabilityServiceMock.mockImplementation(() => { throw error; });
+      const statusMock = jest.spyOn(resMock, 'status');
+      const renderMock = jest.spyOn(resMock, 'render');
+
+      await expiredToken(reqMock, resMock, nextMock);
+
+      expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock, true);
+      expect(statusMock).toHaveBeenCalledWith(500);
+      expect(renderMock).toHaveBeenCalledWith('error/service-unavailable');
+    });
+
+    it('should call next(error) when unhandled error', async () => {
+      const error: Error = new Error('oops!');
+      const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
+      extractTokenPayloadServiceMock.mockImplementation(() => { throw error; });
+
+      await expiredToken(reqMock, resMock, nextMock);
+
+      expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock, true);
+      expect(nextMock).toHaveBeenCalledWith(error);
     });
   });
 

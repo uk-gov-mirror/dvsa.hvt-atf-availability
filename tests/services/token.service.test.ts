@@ -1,9 +1,8 @@
-import AWS from 'aws-sdk';
 import { Request } from 'express';
-import jwt from 'jsonwebtoken';
 import { AxiosResponse } from 'axios';
+import AWS from 'aws-sdk';
 import { TokenPayload } from '../../src/models/token.model';
-import { decryptJwtSecret, tokenService } from '../../src/services/token.service';
+import { tokenService } from '../../src/services/token.service';
 import { logger } from '../../src/utils/logger.util';
 import { ExpiredTokenException } from '../../src/exceptions/expiredToken.exception';
 import { InvalidTokenException } from '../../src/exceptions/invalidToken.exception';
@@ -11,125 +10,202 @@ import { request } from '../../src/utils/request.util';
 import {
   getExpiredYesToken,
   getInvalidToken,
+  getIsAvailableMissingToken,
+  getSubMissingToken,
+  getStartDateMissingToken,
+  getEndDateMissingToken,
   getJwtSecret,
+  getValidYesToken,
 } from '../data-providers/token.dataProvider';
 
-process.env.GENERATE_TOKEN_URL = 'http://generate-token-url.gov';
-process.env.KMS_KEY_ID = 'some-key-id';
-process.env.JWT_SECRET = 'dmVyeSB2ZXJ5IHNlY3JldA==';
-process.env.AWS_REGION = 'some-aws-region';
-process.env.AWS_ENDPOINT = 'some-aws-endpoint';
+let jwtSecret: string;
+let decryptMock: jest.Mock;
+let awsMock: jest.Mocked<typeof AWS>;
 
-logger.warn = jest.fn();
-logger.info = jest.fn();
-
-const jwtSecret = getJwtSecret();
-const reqMock = <Request> <unknown> {
-  apiGateway: { event: { requestContext: { requestId: 'apiRequestId' } } },
-  app: { locals: { correlationId: 'correlationId' } },
-  query: { token: 'token' },
-};
-const decryptMock = jest.fn(() => ({
-  promise: jest.fn().mockResolvedValue({ Plaintext: 'some-plaintext' }),
-}));
 jest.mock('aws-sdk', () => ({
   KMS: jest.fn().mockImplementation(() => ({
     decrypt: decryptMock,
   })),
 }));
+logger.warn = jest.fn();
+logger.info = jest.fn();
 
 describe('Test token.service', () => {
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  describe('decryptJwtSecret()', () => {
-    test('decrypts the secret', async () => {
-      const utf8EncodedDecryptedSecret = 'very very secret';
-
-      await decryptJwtSecret(reqMock);
-
-      expect(decryptMock).toHaveBeenCalledTimes(1);
-      expect(decryptMock).toHaveBeenCalledWith({
-        KeyId: process.env.KMS_KEY_ID,
-        CiphertextBlob: Buffer.from(utf8EncodedDecryptedSecret),
-      });
-    });
-  });
-
   describe('extractTokenPayload method', () => {
-    it('should throw InvalidTokenException when token wasn\'t passed', () => {
-      const req: Request = <Request> <unknown> { query: null };
+    beforeEach(() => {
+      jwtSecret = getJwtSecret();
 
-      expect(() => tokenService.extractTokenPayload(req))
-        .toThrow(new InvalidTokenException('Token is undefined'));
-      expect(logger.warn).toBeCalledWith(req, 'Token missing from query params');
-    });
-
-    it('should throw ExpiredTokenException when expired token provided', () => {
-      const expiredToken: string = getExpiredYesToken();
-      const req: Request = <Request> <unknown> {
-        query: { token: expiredToken },
-        app: { locals: { jwtSecret: 'secret' } },
+      process.env = {
+        KMS_KEY_ID: 'some-key-id',
+        AWS_REGION: 'some-aws-region',
+        AWS_ENDPOINT: 'some-aws-endpoint',
+        JWT_SECRET: jwtSecret,
       };
 
-      expect(() => tokenService.extractTokenPayload(req))
-        .toThrow(new ExpiredTokenException(`Token [${expiredToken}] is expired`));
-      expect(logger.warn).toBeCalledWith(req, expect.stringContaining('Expired token provided, error'));
+      decryptMock = jest.fn(() => ({
+        promise: jest.fn().mockImplementation(() => ({ Plaintext: jwtSecret })),
+      }));
+      awsMock = <jest.Mocked<typeof AWS>> AWS;
     });
 
-    it('should throw InvalidTokenException when invalid token provided', () => {
+    afterEach(() => {
+      process.env = {};
+      jest.clearAllMocks();
+      awsMock.KMS.mockClear();
+      decryptMock.mockClear();
+    });
+
+    it('should return properly decoded token payload data when valid token provided', async () => {
+      const validToken: string = getValidYesToken();
+      const req: Request = <Request> <unknown> { query: { token: validToken } };
+
+      const result: TokenPayload = await tokenService.extractTokenPayload(req);
+
+      expect(awsMock.KMS).toHaveBeenCalledWith({
+        apiVersion: '2014-11-01',
+        region: process.env.AWS_REGION,
+        endpoint: process.env.AWS_ENDPOINT,
+      });
+      expect(decryptMock).toHaveBeenCalledWith({
+        KeyId: process.env.KMS_KEY_ID,
+        CiphertextBlob: Buffer.from(jwtSecret, 'base64'),
+      });
+      expect(result).toStrictEqual({
+        atfId: '1D62ABFD-F03D-4DE0-9ED5-8C02F97C553D',
+        isAvailable: true,
+        startDate: '2020-10-06T14:21:45.000Z',
+        endDate: '2020-11-03T14:21:45.000Z',
+      });
+    });
+
+    it('should return properly decoded token payload data when expired tokens are ignored', async () => {
+      // this is for the purpose of extracting ATF ID from an expired token (so that a new one can be requested)
+      const expiredToken: string = getExpiredYesToken();
+      const req: Request = <Request> <unknown> { query: { token: expiredToken } };
+
+      const result: TokenPayload = await tokenService.extractTokenPayload(req, true);
+
+      expect(result).toStrictEqual({
+        atfId: '1D62ABFD-F03D-4DE0-9ED5-8C02F97C553D',
+        isAvailable: true,
+        startDate: '2020-10-06T14:21:45.000Z',
+        endDate: '2020-11-03T14:21:45.000Z',
+      });
+    });
+
+    it('should throw InvalidTokenException when token wasn\'t passed', async () => {
+      const req: Request = <Request> <unknown> { query: null };
+
+      await expect(
+        async () => tokenService.extractTokenPayload(req),
+      ).rejects.toThrow(
+        new InvalidTokenException(),
+      );
+      expect(logger.warn).toBeCalledWith(req, 'Token is missing from query params');
+    });
+
+    it('should throw ExpiredTokenException when expired token provided', async () => {
+      const expiredToken: string = getExpiredYesToken();
+      const req: Request = <Request> <unknown> { query: { token: expiredToken } };
+
+      await expect(
+        async () => tokenService.extractTokenPayload(req),
+      ).rejects.toThrow(
+        new ExpiredTokenException(),
+      );
+      expect(logger.warn).toBeCalledWith(req, expect.stringContaining('Token has expired'));
+    });
+
+    it('should throw InvalidTokenException when invalid token provided', async () => {
       const invalidToken: string = getInvalidToken();
       const req: Request = <Request> <unknown> { query: { token: invalidToken } };
 
-      expect(() => tokenService.extractTokenPayload(req))
-        .toThrow(new InvalidTokenException(`Token [${invalidToken}] is invalid`));
-      expect(logger.warn).toBeCalledWith(req, expect.stringContaining('Invalid token provided, error'));
+      await expect(
+        async () => tokenService.extractTokenPayload(req),
+      ).rejects.toThrow(
+        new InvalidTokenException(),
+      );
+      expect(logger.warn).toBeCalledWith(req, expect.stringContaining('Failed to verify token, error:'));
     });
 
-    it('should return properly decoded token payload data when valid token provided', () => {
-      const req: Request = <Request> <unknown> {
-        query: { token: 'foo' },
-        app: { locals: { jwtSecret } },
-      };
-      jwt.verify = jest.fn();
-      (jwt.verify as jest.Mock).mockImplementation(() => ({
-        sub: 'atf-id-sample',
-        isAvailable: true,
-        startDate: 1601903212,
-        endDate: 1601903220,
+    it('should throw InvalidTokenException when "isAvailable" is missing', async () => {
+      const invalidToken: string = getIsAvailableMissingToken();
+      const req: Request = <Request> <unknown> { query: { token: invalidToken } };
+
+      await expect(
+        async () => tokenService.extractTokenPayload(req),
+      ).rejects.toThrow(
+        new InvalidTokenException(),
+      );
+      expect(logger.warn).toBeCalledWith(
+        req, expect.stringContaining('Failed to verify token, error: "isAvailable" is missing'),
+      );
+    });
+
+    it('should throw InvalidTokenException when "sub" is missing', async () => {
+      const invalidToken: string = getSubMissingToken();
+      const req: Request = <Request> <unknown> { query: { token: invalidToken } };
+
+      await expect(
+        async () => tokenService.extractTokenPayload(req),
+      ).rejects.toThrow(
+        new InvalidTokenException(),
+      );
+      expect(logger.warn).toBeCalledWith(
+        req, expect.stringContaining('Failed to verify token, error: "sub" is missing'),
+      );
+    });
+
+    it('should throw InvalidTokenException when "startDate" is missing', async () => {
+      const invalidToken: string = getStartDateMissingToken();
+      const req: Request = <Request> <unknown> { query: { token: invalidToken } };
+
+      await expect(
+        async () => tokenService.extractTokenPayload(req),
+      ).rejects.toThrow(
+        new InvalidTokenException(),
+      );
+      expect(logger.warn).toBeCalledWith(
+        req, expect.stringContaining('Failed to verify token, error: "startDate" is missing'),
+      );
+    });
+
+    it('should throw InvalidTokenException when "endDate" is missing', async () => {
+      const invalidToken: string = getEndDateMissingToken();
+      const req: Request = <Request> <unknown> { query: { token: invalidToken } };
+
+      await expect(
+        async () => tokenService.extractTokenPayload(req),
+      ).rejects.toThrow(
+        new InvalidTokenException(),
+      );
+      expect(logger.warn).toBeCalledWith(
+        req, expect.stringContaining('Failed to verify token, error: "endDate" is missing'),
+      );
+    });
+
+    test('should rethrow error when failed to decrypt JWT_SECRET', async () => {
+      const validToken: string = getValidYesToken();
+      const req: Request = <Request> <unknown> { query: { token: validToken } };
+      const error = new Error('oops!');
+      decryptMock = jest.fn(() => ({
+        promise: jest.fn().mockImplementation(() => { throw error; }),
       }));
 
-      const result: TokenPayload = tokenService.extractTokenPayload(req);
-
-      expect(result).toStrictEqual({
-        atfId: 'atf-id-sample',
-        isAvailable: true,
-        startDate: '2020-10-05T13:06:52.000Z',
-        endDate: '2020-10-05T13:07:00.000Z',
-      });
-    });
-
-    it('should return properly decoded token payload data when expired tokens are ignored', () => {
-      // this is for the purpose of extracting ATF ID from an expired token (so that a new one can be requested)
-      const expiredToken: string = getExpiredYesToken();
-      const req: Request = <Request> <unknown> {
-        query: { token: expiredToken },
-        app: { locals: { jwtSecret } },
-      };
-
-      const result: TokenPayload = tokenService.extractTokenPayload(req, true);
-
-      expect(result).toStrictEqual({
-        atfId: 'atf-id-sample',
-        isAvailable: true,
-        startDate: '2020-10-05T13:06:52.000Z',
-        endDate: '2020-10-05T13:07:00.000Z',
-      });
+      await expect(
+        async () => tokenService.extractTokenPayload(req),
+      ).rejects.toThrow(error);
+      expect(logger.warn).toBeCalledWith(
+        req, expect.stringContaining('Failed to decrypt JWT_SECRET'),
+      );
     });
   });
 
   describe('retrieveTokenFromQueryParams method', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
     it('should return token value from query params if token was passed', () => {
       const token = 'foo';
       const req: Request = <Request> <unknown> { query: { token } };
@@ -149,6 +225,15 @@ describe('Test token.service', () => {
   });
 
   describe('reissueToken method', () => {
+    beforeEach(() => {
+      process.env = { GENERATE_TOKEN_URL: 'http://generate-token-url.gov' };
+    });
+
+    afterEach(() => {
+      process.env = { };
+      jest.clearAllMocks();
+    });
+
     it('should call request util with correct params', async () => {
       const requestMock = jest.spyOn(request, 'post');
       const token = 'foo';
@@ -160,21 +245,16 @@ describe('Test token.service', () => {
       expect(requestMock).toHaveBeenCalledWith(req, `${process.env.GENERATE_TOKEN_URL}?atfId=atf-id`, {});
     });
 
-    it('should log errors', async () => {
+    it('should log and rethrow errors', async () => {
       const token = 'foo';
       const req: Request = <Request> <unknown> { query: { token } };
       const error: Error = new Error('oops!');
-      const errorString: string = JSON.stringify(error, Object.getOwnPropertyNames(error));
       const requestMock = jest.spyOn(request, 'post');
       requestMock.mockReturnValue(Promise.reject(error));
 
-      const result = await tokenService.reissueToken(req, 'atf-id');
+      await expect(async () => tokenService.reissueToken(req, 'atf-id')).rejects.toThrow(error);
 
-      expect(result).toStrictEqual({});
-      expect(logger.warn).toHaveBeenCalledWith(
-        req,
-        `Failed to generate new ATF [atf-id] token, error ${errorString}`,
-      );
+      expect(logger.warn).toHaveBeenCalledWith(req, 'Failed to generate new ATF [atf-id] token');
     });
   });
 });

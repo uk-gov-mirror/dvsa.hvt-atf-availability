@@ -1,5 +1,5 @@
 export class ExpiredTokenException extends Error {
-  constructor(public message: string) {
+  constructor(message?: string) {
     super(message);
     this.name = 'ExpiredTokenException';
     Object.setPrototypeOf(this, ExpiredTokenException.prototype);

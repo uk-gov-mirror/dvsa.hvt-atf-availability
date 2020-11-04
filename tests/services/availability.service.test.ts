@@ -6,6 +6,7 @@ import { getAtf } from '../data-providers/atf.dataProvider';
 import { TokenPayload } from '../../src/models/token.model';
 import { logger } from '../../src/utils/logger.util';
 import { Availability } from '../../src/models/availability.model';
+import { ATFOperationException } from '../../src/exceptions/atfOperation.exception';
 
 request.get = jest.fn();
 request.put = jest.fn();
@@ -43,17 +44,20 @@ describe('Test availability.service', () => {
       );
     });
 
-    it('should return an empty atf and log an error when something went wrong', async () => {
-      const expectedError: Error = new Error('Ooops!');
-      const expectedErrorString: string = JSON.stringify(expectedError, Object.getOwnPropertyNames(expectedError));
-      (request.get as jest.Mock).mockReturnValue(Promise.reject(expectedError));
+    it('should log and throw an ATFOperationException error when something went wrong', async () => {
+      const initialError: Error = new Error('Oops!');
+      const expectedError: ATFOperationException = new ATFOperationException();
+      (request.get as jest.Mock).mockReturnValue(Promise.reject(initialError));
 
-      const result = await availabilityService.getAtf({} as Request, atf.id);
+      await expect(() => availabilityService.getAtf(
+        {} as Request,
+        atf.id,
+      )).rejects.toThrow(expectedError);
 
-      expect(result).toStrictEqual({});
+      const initialErrorString: string = JSON.stringify(initialError, Object.getOwnPropertyNames(initialError));
       expect(logger.warn).toHaveBeenCalledWith(
         {} as Request,
-        `Could not retrieve ATF [${atf.id}] details, error: ${expectedErrorString}`,
+        `Failed to retrieve ATF [${atf.id}] details, error: ${initialErrorString}`,
       );
     });
   });
@@ -99,20 +103,20 @@ describe('Test availability.service', () => {
       );
     });
 
-    it('should return an empty ATF and log an error when something went wrong', async () => {
-      const expectedError: Error = new Error('Ooops!');
-      const expectedErrorString: string = JSON.stringify(expectedError, Object.getOwnPropertyNames(expectedError));
-      (request.put as jest.Mock).mockReturnValue(Promise.reject(expectedError));
+    it('should log and throw an ATFOperationException error when something went wrong', async () => {
+      const initialError: Error = new Error('Oops!');
+      const expectedError: ATFOperationException = new ATFOperationException();
+      (request.put as jest.Mock).mockReturnValue(Promise.reject(initialError));
 
-      const result: AuthorisedTestingFacility = await availabilityService.updateAtfAvailability(
+      await expect(() => availabilityService.updateAtfAvailability(
         {} as Request,
         tokenPayload,
-      );
+      )).rejects.toThrow(expectedError);
 
-      expect(result).toStrictEqual({});
+      const initialErrorString: string = JSON.stringify(initialError, Object.getOwnPropertyNames(initialError));
       expect(logger.warn).toHaveBeenCalledWith(
         {} as Request,
-        `Could not update ATF [${tokenPayload.atfId}] details, error: ${expectedErrorString}`,
+        `Failed to update ATF [${tokenPayload.atfId}] availability, error: ${initialErrorString}`,
       );
     });
   });
