@@ -12,7 +12,7 @@ const getAtf = async (req: Request, id: string): Promise<AuthorisedTestingFacili
 
   return request.get(
     req,
-    `${process.env.API_BASE_URL_READ}${process.env.DYNAMODB_ATF_TABLE_NAME}/${id}?keyName=id`,
+    `${process.env.API_BASE_URL_READ}/${process.env.DYNAMODB_ATF_TABLE_NAME}/${id}?keyName=id`,
   )
     .then((response: AxiosResponse<AuthorisedTestingFacility>) => response.data)
     .catch((error) => {
@@ -34,7 +34,7 @@ const updateAtfAvailability = async (req: Request, tokenPayload: TokenPayload): 
     `Updating ATF [${tokenPayload.atfId}], availability: ${JSON.stringify(availability)}`,
   );
 
-  const baseUrl = `${process.env.API_BASE_URL_WRITE}${process.env.DYNAMODB_ATF_TABLE_NAME}`;
+  const baseUrl = `${process.env.API_BASE_URL_WRITE}/${process.env.DYNAMODB_ATF_TABLE_NAME}`;
   const uri = `${baseUrl}/${tokenPayload.atfId}?keyName=id`;
 
   return request.put(req, uri, { availability })
