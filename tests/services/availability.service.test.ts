@@ -40,7 +40,7 @@ describe('Test availability.service', () => {
       expect(result).toStrictEqual(atf);
       expect(request.get).toHaveBeenCalledWith(
         {},
-        `${process.env.API_BASE_URL_READ}${process.env.DYNAMODB_ATF_TABLE_NAME}/${atf.id}?keyName=id`,
+        `${process.env.API_BASE_URL_READ}/${process.env.DYNAMODB_ATF_TABLE_NAME}/${atf.id}?keyName=id`,
       );
     });
 
@@ -98,7 +98,7 @@ describe('Test availability.service', () => {
       expect(result).toStrictEqual(updatedAtf);
       expect(request.put).toHaveBeenCalledWith(
         {},
-        `${process.env.API_BASE_URL_WRITE}${process.env.DYNAMODB_ATF_TABLE_NAME}/${atf.id}?keyName=id`,
+        `${process.env.API_BASE_URL_WRITE}/${process.env.DYNAMODB_ATF_TABLE_NAME}/${atf.id}?keyName=id`,
         { availability: updatedAvailability },
       );
     });
