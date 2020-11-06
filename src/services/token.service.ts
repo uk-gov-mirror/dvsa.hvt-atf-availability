@@ -91,9 +91,7 @@ const extractTokenPayload = async (req: Request, ignoreExpiration = false): Prom
 const reissueToken = async (req: Request, atfId: string): Promise<AxiosResponse> => {
   logger.info(req, `Requesting new ATF [${atfId}] token`);
 
-  return request.post(
-    req, `${process.env.GENERATE_TOKEN_URL}?atfId=${atfId}`, {},
-  ).catch((error) => {
+  return request.post(req, `${process.env.GENERATE_TOKEN_URL}?atfId=${atfId}`).catch((error) => {
     logger.warn(req, `Failed to generate new ATF [${atfId}] token`);
     throw error;
   });
