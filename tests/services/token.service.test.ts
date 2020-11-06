@@ -242,7 +242,7 @@ describe('Test token.service', () => {
 
       await tokenService.reissueToken(req, 'atf-id');
 
-      expect(requestMock).toHaveBeenCalledWith(req, `${process.env.GENERATE_TOKEN_URL}?atfId=atf-id`, {});
+      expect(requestMock).toHaveBeenCalledWith(req, `${process.env.GENERATE_TOKEN_URL}?atfId=atf-id`);
     });
 
     it('should log and rethrow errors', async () => {
