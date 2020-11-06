@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
+import { subDays } from 'date-fns';
 import { logger } from '../utils/logger.util';
 import { booleanHelper } from '../utils/booleanHelper.util';
 import { AuthorisedTestingFacility } from '../models/authorisedTestingFacility.model';
+import { Availability } from '../models/availability.model';
 import { availabilityService } from '../services/availability.service';
 import { tokenService } from '../services/token.service';
 import { TokenPayload } from '../models/token.model';
@@ -49,7 +51,16 @@ export const confirmAvailability = async (req: Request, res: Response, next: Nex
     const atf: AuthorisedTestingFacility = await availabilityService.getAtf(req, tokenPayload.atfId);
     const templateName: string = booleanHelper.mapBooleanToYesNoString(atf.availability.isAvailable);
 
-    return res.render(`availability-confirmation/${templateName}`, { atf });
+    const displayEndDate = subDays(new Date(atf.availability.endDate), 1);
+    const displayAvailability: Availability = {
+      ...atf.availability,
+      endDate: displayEndDate.toISOString(),
+    };
+    const templateVars: AuthorisedTestingFacility = {
+      ...atf,
+      availability: displayAvailability,
+    };
+    return res.render(`availability-confirmation/${templateName}`, { atf: templateVars });
   } catch (error) {
     if (error instanceof ExpiredTokenException) {
       return res.redirect(302, buildRedirectUri('/reissue-token', req));
