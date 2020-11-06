@@ -1,5 +1,122 @@
+{% from "govuk-frontend/govuk/components/inset-text/macro.njk" import govukInsetText %}
+
 {% extends "layouts/layout.njk" %} 
 
 {% block content %}
-  <p>Privacy</p>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h2 class="govuk-heading-l">Privacy policy</h2>
+    <p class="govuk-body">The Driver and Vehicle Standards Agency (DVSA) provides this service so that you can find your nearest approved testing facility offering MOTs for Heavy goods vehicles (HGV), buses or trailers. DVSA is an executive agency of the Department for Transport (DfT).</p>
+    <p class="govuk-body">The data controller for DVSA is DfT - a data controller determines the reasons and how personal data is processed. For more information see the Information Commissioner’s Office (ICO)
+      <a class="govuk-link" target="_blank" href="https://ico.org.uk/ESDWebPages/Entry/Z7122992">Data Protection Public Register</a>. DfT’s registration number is Z7122992.
+    </p>
+
+    <h2 class="govuk-heading-l">What data we need</h2>
+    <p class="govuk-body">If you are using the service to find your nearest testing centre, then we only ask for a postcode.</p>
+    <p class="govuk-body">The legal basis for processing this data is ‘consent’ as you have chosen to use the service to find your nearest test centre.</p>
+
+    <h4 class="govuk-heading-s">Test centres</h4>
+    <p class="govuk-body">DVSA processes data from those who wish their business details to be included in the ‘find your nearest’ search.</p>
+    <p class="govuk-body">The personal data we collect from test centres will include:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>the name of the person completing the entry</li>
+      <li>full business name and address, including postcode</li>
+      <li>business email address</li>
+      <li>business telephone number</li>
+    </ul>
+    <p class="govuk-body">For most businesses, the above data will not be classified as personal data other than the individual’s name.</p>
+
+    {{ govukInsetText({
+      html: "To remove your consent, email <a class='govuk-link' href='mailto:enquiries@dvsa.gov.uk'>enquiries@dvsa.gov.uk</a>."
+    }) }}
+
+    <h3 class="govuk-heading-m">Why we need it</h3>
+    <p class="govuk-body">We need the personal data we collect from you to show users how far away from their input postcode you are and how to contact the business.</p>
+    <p class="govuk-body">We need a user’s postcode so that we can show them the nearest 50 test centres to the postcode that they input.</p>
+
+    <h2 class="govuk-heading-l">What we do with it</h2>
+    <p class="govuk-body">We collect, use, and store the data you give us for the reasons set out in this policy.</p>
+    <p class="govuk-body">We will not:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>sell or rent your data to third parties</li>
+      <li>share your data with third parties for marketing purposes</li>
+    </ul>
+
+    <h3 class="govuk-heading-m">How long we keep your data</h3>
+    <p class="govuk-body">We will only keep your personal data for as long as it is needed for the reasons set out in this policy or as required by law.</p>
+    <p class="govuk-body">We will hold your personal data for no longer than three years after your feedback.</p>
+
+    <h3 class="govuk-heading-m">Where it might go</h3>
+    <p class="govuk-body">Our IT infrastructure and technology has been checked to make sure it’s safe and secure.</p>
+
+    <h2 class="govuk-heading-l">Protecting your data and your rights</h2>
+    <p class="govuk-body">
+      The <a href="https://www.gov.uk/government/organisations/driver-and-vehicle-standards-agency/about/personal-information-charter" class="govuk-link" target="_blank">DVSA personal information charter</a>
+      sets out what steps are taken to protect your data, and the rights you have over your data.
+    </p>
+
+    <h2 class="govuk-heading-l">Automated decision making and profiling</h2>
+    <p class="govuk-body">Your data is not subject to automated decision making or profiling as defined in data protection legislation</p>
+
+    <h2 class="govuk-heading-l">Changes to this notice</h2>
+    <p class="govuk-body">We may change this privacy notice at our discretion at any time.</p>
+    <p class="govuk-body">When we change this notice, the date on the page will be updated. Any changes to this privacy notice will be applied to you and your data as of the revision date.</p>
+    <p class="govuk-body">We encourage you to periodically review this privacy notice to be informed about how your data is protected.</p>
+
+    <h2 class="govuk-heading-l">How to contact us</h2>
+    <p class="govuk-body">If you have any questions about anything in this document or if you consider that your personal data has been misused or mishandled, you can contact the DVSA data protection manager.</p>
+
+    {% set contactDataProtectionManager %}
+      <ul class="govuk-list">
+        <li><strong>DVSA data protection manager</strong></li>
+        <li>Data Protection Manager</li>
+        <li>Driver and Vehicle Standards Agency</li>
+        <li>The Axis Building</li>
+        <li>112 Upper Parliament Street</li>
+        <li>Nottingham</li>
+        <li>NG1 6LP</li>
+      </ul>
+      <ul class="govuk-list">
+        <li>Email</li>
+        <li><a class="govuk-link" href="mailto:information.handling@dvsa.gov.uk">information.handling@dvsa.gov.uk</a></li>
+      </ul>
+    {% endset %}
+
+    {{ govukInsetText({
+      html: contactDataProtectionManager,
+      classes: "contact-container"
+    }) }}
+
+    <p class="govuk-body">
+      Contact <a href="https://www.gov.uk/contact-dvsa" class="govuk-link" target="_blank">DVSA customer services</a>
+      if you have a query that is not about how your personal data is used.
+    </p>
+    <p class="govuk-body">You may also make a complaint to the Information Commissioner, who is an independent regulator.</p>
+
+    {% set contactInformationCommissionerOffice %}
+      <ul class="govuk-list">
+        <li><strong>Information Commissioner's Office</strong></li>
+        <li>Email</li>
+        <li><a class="govuk-link" href="mailto:casework@ico.org.uk">casework@ico.org.uk</a></li>
+      </ul>
+      <ul class="govuk-list">
+        <li>Contact form</li>
+        <li><a class="govuk-link" target="_blank" href="https://ico.org.uk/global/contact-us/email/">https://ico.org.uk/glo...</a></li>
+      </ul>
+      <ul class="govuk-list">
+        <li>Telephone</li>
+        <li>0303 123 1113</li>
+      </ul>
+      <ul class="govuk-list">
+        <li>Textphone</li>
+        <li>01625 545860</li>
+      </ul>
+    {% endset %}
+
+    {{ govukInsetText({
+      html: contactInformationCommissionerOffice,
+      classes: "contact-container"
+    }) }}
+  </div>
+</div>
 {% endblock %}
