@@ -126,13 +126,7 @@ describe('Test availability.controller', () => {
       const getAtfServiceMock = jest.spyOn(availabilityService, 'getAtf');
       getAtfServiceMock.mockReturnValue(
         Promise.resolve(
-          <AuthorisedTestingFacility> <unknown> {
-            id: atfId,
-            availability: {
-              isAvailable: true,
-              endDate: '2020-10-11T17:00:00.000Z',
-            },
-          },
+          <AuthorisedTestingFacility> <unknown> { id: atfId, availability: { isAvailable: true } },
         ),
       );
       const renderMock = jest.spyOn(resMock, 'render');
@@ -142,13 +136,7 @@ describe('Test availability.controller', () => {
       expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock);
       expect(getAtfServiceMock).toHaveBeenCalledWith(reqMock, atfId);
       expect(renderMock).toHaveBeenCalledWith('availability-confirmation/yes', {
-        atf: {
-          id: atfId,
-          availability: {
-            isAvailable: true,
-            endDate: '2020-10-10T17:00:00.000Z',
-          },
-        },
+        atf: { id: atfId, availability: { isAvailable: true } },
       });
     });
 
@@ -158,13 +146,7 @@ describe('Test availability.controller', () => {
       const getAtfServiceMock = jest.spyOn(availabilityService, 'getAtf');
       getAtfServiceMock.mockReturnValue(
         Promise.resolve(
-          <AuthorisedTestingFacility> <unknown> {
-            id: atfId,
-            availability: {
-              isAvailable: false,
-              endDate: '2020-10-11T17:00:00.000Z',
-            },
-          },
+          <AuthorisedTestingFacility> <unknown> { id: atfId, availability: { isAvailable: false } },
         ),
       );
       const renderMock = jest.spyOn(resMock, 'render');
@@ -174,13 +156,7 @@ describe('Test availability.controller', () => {
       expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock);
       expect(getAtfServiceMock).toHaveBeenCalledWith(reqMock, atfId);
       expect(renderMock).toHaveBeenCalledWith('availability-confirmation/no', {
-        atf: {
-          id: atfId,
-          availability: {
-            isAvailable: false,
-            endDate: '2020-10-10T17:00:00.000Z',
-          },
-        },
+        atf: { id: atfId, availability: { isAvailable: false } },
       });
     });
 
