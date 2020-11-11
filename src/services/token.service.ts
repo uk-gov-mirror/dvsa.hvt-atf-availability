@@ -79,7 +79,6 @@ const extractTokenPayload = async (req: Request, ignoreExpiration = false): Prom
   const secret: string = await decryptJwtSecret(req);
   logger.info(req, 'Extracting token payload');
   const decodedToken: Record<string, unknown> = decodeToken(req, secret, ignoreExpiration);
-
   return {
     atfId: <string> decodedToken.sub,
     isAvailable: <boolean> decodedToken.isAvailable,
