@@ -7,7 +7,7 @@
   <div class="govuk-grid-column-two-thirds">
     <p class="govuk-body-s" id="last-updated-date" >Last updated on {{ atf.availability.lastUpdated | formatDateTime }}</p>
  {{ govukBackLink({
-    href: "/choose?token="+atf.token,
+    href: "/update?token="+atf.token,
     text: "Back",
     attributes: { id: "back-link" }
   }) }}
