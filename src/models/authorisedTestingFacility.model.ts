@@ -14,4 +14,5 @@ export interface AuthorisedTestingFacility {
   inclusions: string[];
   exclusions: string[];
   restrictions: string[];
+  token: string
 }

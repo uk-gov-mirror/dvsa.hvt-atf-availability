@@ -6,7 +6,11 @@
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
     <p class="govuk-body-s" id="last-updated-date" >Last updated on {{ atf.availability.lastUpdated | formatDateTime }}</p>
-
+ {{ govukBackLink({
+    href: "/choose?token="+atf.token,
+    text: "Back",
+    attributes: { id: "back-link" }
+  }) }}
     {{ govukPanel({
       titleText: atf.name + " can take more MOT bookings",
       attributes: { id: "availability-panel" }

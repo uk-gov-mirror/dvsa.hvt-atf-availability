@@ -22,12 +22,7 @@ const getAtf = async (req: Request, id: string): Promise<AuthorisedTestingFacili
     });
 };
 const updateAtfAvailability = async (req: Request, tokenPayload: TokenPayload): Promise<AuthorisedTestingFacility> => {
-  const availability: Availability = {
-    isAvailable: tokenPayload.isAvailable,
-    startDate: tokenPayload.startDate,
-    endDate: tokenPayload.endDate,
-    lastUpdated: new Date().toISOString(),
-  };
+  const availability: Availability = setAvailability(tokenPayload);
 
   logger.info(
     req,
@@ -46,7 +41,17 @@ const updateAtfAvailability = async (req: Request, tokenPayload: TokenPayload): 
     });
 };
 
+const setAvailability = (tokenPayload: TokenPayload) => {
+  return {
+    isAvailable: tokenPayload.isAvailable,
+    startDate: tokenPayload.startDate,
+    endDate: tokenPayload.endDate,
+    lastUpdated: new Date().toISOString(),
+  };
+}
+
 export const availabilityService = {
   getAtf,
   updateAtfAvailability,
+  setAvailability
 };

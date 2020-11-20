@@ -1,0 +1,75 @@
+{% extends "layouts/layout.njk" %}
+{% from "govuk-frontend/govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk-frontend/govuk/components/button/macro.njk" import govukButton %}
+{% import "includes/errors.njk" as error %}
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+<form class="form" action="/confirm?token={{atf.token}}" method="post">
+{% if hasErrors %}
+    
+    {{ error.summary(formErrors) }}
+
+    {{ govukRadios({
+            idPrefix: "hvt-",
+            name: "availability",
+            fieldset: {
+                legend: {
+                text: "Could " + atf.name  + " take more MOT bookings in the next 4 weeks?",
+                isPageHeading: true,
+                classes: "govuk-fieldset__legend--l"
+                }
+            },
+            hint: {
+                text: "Between " + ( atf.availability.startDate | formatDate) + " and " + (atf.availability.endDate | formatDate) + ", could you take more MOT bookings at your test facility with the testers you have confirmed?"
+            },
+            errorMessage: {
+                    text: "Select yes if you can take more MOT bookings"
+                },
+            items: [
+                {
+                value: "true",
+                text: "Yes"
+                },
+                {
+                value: "false",
+                text: "No, my test facility is fully booked"
+                }
+            ]
+            }) 
+    }}
+{% else %}
+    {{ govukRadios({
+            idPrefix: "hvt-",
+            name: "availability",
+            fieldset: {
+                legend: {
+                text: "Could " + atf.name  + " take more MOT bookings in the next 4 weeks?",
+                isPageHeading: true,
+                classes: "govuk-fieldset__legend--l"
+                }
+            },
+            hint: {
+                text: "Between " + ( atf.availability.startDate | formatDate) + " and " + (atf.availability.endDate | formatDate) + ", could you take more MOT bookings at your test facility with the testers you have confirmed?"
+            },
+            items: [
+                {
+                value: "true",
+                text: "Yes"
+                },
+                {
+                value: "false",
+                text: "No, my test facility is fully booked"
+                }
+            ]
+            }) 
+    }}
+{% endif %}      
+    {{ govukButton({
+        text: "Continue"
+    }) }}
+   
+</form>
+</div>
+</div>
+{% endblock %}
