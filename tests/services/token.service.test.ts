@@ -8,14 +8,13 @@ import { ExpiredTokenException } from '../../src/exceptions/expiredToken.excepti
 import { InvalidTokenException } from '../../src/exceptions/invalidToken.exception';
 import { request } from '../../src/utils/request.util';
 import {
-  getExpiredYesToken,
+  getExpiredToken,
   getInvalidToken,
-  getIsAvailableMissingToken,
   getSubMissingToken,
   getStartDateMissingToken,
   getEndDateMissingToken,
   getJwtSecret,
-  getValidYesToken,
+  getValidToken,
 } from '../data-providers/token.dataProvider';
 
 let jwtSecret: string;
@@ -56,7 +55,7 @@ describe('Test token.service', () => {
     });
 
     it('should return properly decoded token payload data when valid token provided', async () => {
-      const validToken: string = getValidYesToken();
+      const validToken: string = getValidToken();
       const req: Request = <Request> <unknown> { query: { token: validToken } };
 
       const result: TokenPayload = await tokenService.extractTokenPayload(req);
@@ -71,25 +70,23 @@ describe('Test token.service', () => {
         CiphertextBlob: Buffer.from(jwtSecret, 'base64'),
       });
       expect(result).toStrictEqual({
-        atfId: '1D62ABFD-F03D-4DE0-9ED5-8C02F97C553D',
-        isAvailable: true,
-        startDate: '2020-10-06T14:21:45.000Z',
-        endDate: '2020-11-03T14:21:45.000Z',
+        "atfId": "856090d1-f2dc-4bbc-ad36-8d14382339e0",
+        "endDate": "2020-12-20T23:59:59.000Z",
+        "startDate": "2020-11-23T00:00:00.000Z",
       });
     });
 
     it('should return properly decoded token payload data when expired tokens are ignored', async () => {
       // this is for the purpose of extracting ATF ID from an expired token (so that a new one can be requested)
-      const expiredToken: string = getExpiredYesToken();
+      const expiredToken: string = getExpiredToken();
       const req: Request = <Request> <unknown> { query: { token: expiredToken } };
 
       const result: TokenPayload = await tokenService.extractTokenPayload(req, true);
 
       expect(result).toStrictEqual({
-        atfId: '1D62ABFD-F03D-4DE0-9ED5-8C02F97C553D',
-        isAvailable: true,
-        startDate: '2020-10-06T14:21:45.000Z',
-        endDate: '2020-11-03T14:21:45.000Z',
+        "atfId": "856090d1-f2dc-4bbc-ad36-8d14382339e0",
+        "endDate": "2020-12-20T23:59:59.000Z",
+        "startDate": "2020-11-23T00:00:00.000Z",
       });
     });
 
@@ -105,7 +102,7 @@ describe('Test token.service', () => {
     });
 
     it('should throw ExpiredTokenException when expired token provided', async () => {
-      const expiredToken: string = getExpiredYesToken();
+      const expiredToken: string = getExpiredToken();
       const req: Request = <Request> <unknown> { query: { token: expiredToken } };
 
       await expect(
@@ -128,20 +125,6 @@ describe('Test token.service', () => {
       expect(logger.warn).toBeCalledWith(req, expect.stringContaining('Failed to verify token, error:'));
     });
 
-    it('should throw InvalidTokenException when "isAvailable" is missing', async () => {
-      const invalidToken: string = getIsAvailableMissingToken();
-      const req: Request = <Request> <unknown> { query: { token: invalidToken } };
-
-      await expect(
-        async () => tokenService.extractTokenPayload(req),
-      ).rejects.toThrow(
-        new InvalidTokenException(),
-      );
-      expect(logger.warn).toBeCalledWith(
-        req, expect.stringContaining('Failed to verify token, error: "isAvailable" is missing'),
-      );
-    });
-
     it('should throw InvalidTokenException when "sub" is missing', async () => {
       const invalidToken: string = getSubMissingToken();
       const req: Request = <Request> <unknown> { query: { token: invalidToken } };
@@ -155,7 +138,7 @@ describe('Test token.service', () => {
         req, expect.stringContaining('Failed to verify token, error: "sub" is missing'),
       );
     });
-
+ 
     it('should throw InvalidTokenException when "startDate" is missing', async () => {
       const invalidToken: string = getStartDateMissingToken();
       const req: Request = <Request> <unknown> { query: { token: invalidToken } };
@@ -185,7 +168,7 @@ describe('Test token.service', () => {
     });
 
     test('should rethrow error when failed to decrypt JWT_SECRET', async () => {
-      const validToken: string = getValidYesToken();
+      const validToken: string = getValidToken();
       const req: Request = <Request> <unknown> { query: { token: validToken } };
       const error = new Error('oops!');
       decryptMock = jest.fn(() => ({
@@ -257,4 +240,5 @@ describe('Test token.service', () => {
       expect(logger.warn).toHaveBeenCalledWith(req, 'Failed to generate new ATF [atf-id] token');
     });
   });
+ 
 });

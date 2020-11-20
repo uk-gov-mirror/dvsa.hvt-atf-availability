@@ -21,12 +21,14 @@ const buildRedirectUri = (baseUri: string, req: Request, retry = false) : string
   return redirectUri;
 };
 
-export const updateAvailability = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  logger.info(req, 'Handling update ATF availability request');
-  //#TODO: this route can be phased out but needed atm as emails out there with it
+export const updateAvailability = async(req:Request, res:Response, next: NextFunction): Promise<void> => {
+  logger.info(req, 'presenting ATF availability choice');
   try {
-    await tokenService.extractTokenPayload(req);
-    return res.redirect(302, buildRedirectUri('/choose', req));
+    const tokenPayload: TokenPayload = await tokenService.extractTokenPayload(req);
+    let atf: AuthorisedTestingFacility = await availabilityService.getAtf(req, tokenPayload.atfId);
+    atf.availability = availabilityService.setAvailability(tokenPayload, false);
+    atf.token = tokenService.retrieveTokenFromQueryParams(req);
+    res.render('availability-confirmation/choose', {'atf':atf})
   } catch (error) {
     if (error instanceof ExpiredTokenException) {
       return res.redirect(302, buildRedirectUri('/reissue-token', req));
@@ -38,22 +40,13 @@ export const updateAvailability = async (req: Request, res: Response, next: Next
 
     return next(error);
   }
-};
-
-export const chooseAvailability = async(req:Request, res:Response, next: NextFunction): Promise<void> => {
-  logger.info(req, 'presenting ATF availability choice');
-  const tokenPayload: TokenPayload = await tokenService.extractTokenPayload(req);
-  let atf: AuthorisedTestingFacility = await availabilityService.getAtf(req, tokenPayload.atfId);
-  atf.availability = availabilityService.setAvailability(tokenPayload);
-  atf.token = tokenService.retrieveTokenFromQueryParams(req);
-  res.render('availability-confirmation/choose', {'atf':atf})
 }
 
 export const confirmAvailability = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   logger.info(req, 'Handling confirm ATF availability request');
   const availability = req.body?.availability || undefined;
   try {
-    let tokenPayload: TokenPayload = await tokenService.extractTokenPayload(req);
+    const tokenPayload: TokenPayload = await tokenService.extractTokenPayload(req);
     let atf: AuthorisedTestingFacility = await availabilityService.getAtf(req, tokenPayload.atfId);
     atf.token = tokenService.retrieveTokenFromQueryParams(req);
     if(availability === undefined) {
@@ -63,8 +56,7 @@ export const confirmAvailability = async (req: Request, res: Response, next: Nex
         formErrors:getDefaultChoiceError()
       })
     }
-    tokenPayload.isAvailable = availability;
-    const updateResponse = await availabilityService.updateAtfAvailability(req,tokenPayload);
+    const updateResponse = await availabilityService.updateAtfAvailability(req,tokenPayload, (availability === 'true'));
     logger.info(req,'update response is ' + updateResponse.availability.isAvailable + 'set for ' + updateResponse.id );
     const templateName: string = booleanHelper.mapBooleanToYesNoString((availability === 'true'));
     return res.render(`availability-confirmation/${templateName}`, { atf });

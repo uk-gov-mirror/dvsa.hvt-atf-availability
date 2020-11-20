@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import {
-  privacy, accessibility, confirmAvailability, expiredToken, reissueToken, updateAvailability, chooseAvailability
+  privacy, accessibility, confirmAvailability, expiredToken, reissueToken, updateAvailability
 } from '../controllers/index.controller';
 
 const indexRoute: Router = express.Router();
@@ -11,5 +11,4 @@ indexRoute.get('/reissue-token', reissueToken);
 indexRoute.get('/expired-token', expiredToken);
 indexRoute.get('/privacy', privacy);
 indexRoute.get('/accessibility', accessibility);
-indexRoute.get('/choose', chooseAvailability)
 export default indexRoute;

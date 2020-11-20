@@ -3,7 +3,7 @@ import { Request, NextFunction, Response } from 'express';
 import { AxiosResponse } from 'axios';
 import {
   reissueToken, expiredToken, updateAvailability, confirmAvailability,
-  accessibility, privacy, chooseAvailability
+  accessibility, privacy
 } from '../../src/controllers/index.controller';
 import { tokenService } from '../../src/services/token.service';
 import { TokenPayload } from '../../src/models/token.model';
@@ -43,19 +43,7 @@ describe('Test availability.controller', () => {
   });
 
   describe('updateAvailability method', () => {
-    it('should call res.redirect() to choose with proper params', async () => {
-      const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
-      extractTokenPayloadServiceMock.mockReturnValue(Promise.resolve(<TokenPayload><unknown>{ atfId }));
-      const redirectMock = jest.spyOn(resMock, 'redirect');
-
-      await updateAvailability(reqMock, resMock, nextMock);
-
-      expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock);
-      expect(redirectMock).toHaveBeenCalledWith(
-        302,
-        `/choose?token=${token}&correlationId=${correlationId}`,
-      );
-    });
+    
 
     it('should call res.redirect() to expired token uri when the token is expired', async () => {
       const error: ExpiredTokenException = new ExpiredTokenException('oops!');
@@ -181,7 +169,7 @@ describe('Test availability.controller', () => {
         }
       )
       const renderMock = jest.spyOn(resMock, 'render');
-      await chooseAvailability(reqMock, resMock, nextMock);
+      await updateAvailability(reqMock, resMock, nextMock);
       expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock);
       expect(renderMock).toHaveBeenCalledWith('availability-confirmation/choose', {
         atf: {

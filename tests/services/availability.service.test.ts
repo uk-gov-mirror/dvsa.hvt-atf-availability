@@ -69,7 +69,7 @@ describe('Test availability.service', () => {
     beforeEach(() => {
       tokenPayload = {
         atfId: atf.id,
-        isAvailable: !atf.availability.isAvailable,
+        isAvailable: false,
         startDate: '2020-09-21T08:00:00Z',
         endDate: '2020-10-11T17:00:00Z',
       };
@@ -81,7 +81,7 @@ describe('Test availability.service', () => {
 
     it('should call request.put() with proper params and return updated atf', async () => {
       const updatedAvailability: Availability = {
-        isAvailable: tokenPayload.isAvailable,
+        isAvailable: true,
         startDate: tokenPayload.startDate,
         endDate: tokenPayload.endDate,
         lastUpdated: new Date().toISOString(),
@@ -93,6 +93,7 @@ describe('Test availability.service', () => {
       const result: AuthorisedTestingFacility = await availabilityService.updateAtfAvailability(
         {} as Request,
         tokenPayload,
+        true
       );
 
       expect(result).toStrictEqual(updatedAtf);
@@ -111,6 +112,7 @@ describe('Test availability.service', () => {
       await expect(() => availabilityService.updateAtfAvailability(
         {} as Request,
         tokenPayload,
+        false
       )).rejects.toThrow(expectedError);
 
       const initialErrorString: string = JSON.stringify(initialError, Object.getOwnPropertyNames(initialError));

@@ -21,12 +21,12 @@ const getAtf = async (req: Request, id: string): Promise<AuthorisedTestingFacili
       throw new ATFOperationException();
     });
 };
-const updateAtfAvailability = async (req: Request, tokenPayload: TokenPayload): Promise<AuthorisedTestingFacility> => {
-  const availability: Availability = setAvailability(tokenPayload);
+const updateAtfAvailability = async (req: Request, tokenPayload: TokenPayload, isAvailable: boolean): Promise<AuthorisedTestingFacility> => {
+  const availability: Availability = setAvailability(tokenPayload, isAvailable);
 
   logger.info(
     req,
-    `Updating ATF [${tokenPayload.atfId}], availability: ${JSON.stringify(availability)}`,
+    `Updating ATF [${tokenPayload.atfId}], availability: ${JSON.stringify(isAvailable)}`,
   );
 
   const baseUrl = `${process.env.API_BASE_URL_WRITE}/${process.env.DYNAMODB_ATF_TABLE_NAME}`;
@@ -41,9 +41,9 @@ const updateAtfAvailability = async (req: Request, tokenPayload: TokenPayload): 
     });
 };
 
-const setAvailability = (tokenPayload: TokenPayload) => {
+const setAvailability = (tokenPayload: TokenPayload, availability: boolean) => {
   return {
-    isAvailable: tokenPayload.isAvailable,
+    isAvailable: availability,
     startDate: tokenPayload.startDate,
     endDate: tokenPayload.endDate,
     lastUpdated: new Date().toISOString(),

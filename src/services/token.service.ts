@@ -63,7 +63,7 @@ const decodeToken = (
     throw new InvalidTokenException();
   }
 
-  ['sub', 'isAvailable', 'startDate', 'endDate'].forEach((attribute) => {
+  ['sub', 'startDate', 'endDate', 'iss'].forEach((attribute) => {
     if (decodedToken[`${attribute}`] === undefined) {
       logger.warn(req, `Failed to verify token, error: "${attribute}" is missing`);
       throw new InvalidTokenException();
@@ -81,7 +81,6 @@ const extractTokenPayload = async (req: Request, ignoreExpiration = false): Prom
   const decodedToken: Record<string, unknown> = decodeToken(req, secret, ignoreExpiration);
   return {
     atfId: <string> decodedToken.sub,
-    isAvailable: <boolean> decodedToken.isAvailable,
     startDate: new Date(<number> decodedToken.startDate * 1000).toISOString(),
     endDate: new Date(<number> decodedToken.endDate * 1000).toISOString(),
   };
