@@ -8,7 +8,6 @@ import { ExpiredTokenException } from '../exceptions/expiredToken.exception';
 import { InvalidTokenException } from '../exceptions/invalidToken.exception';
 import { request } from '../utils/request.util';
 
-
 const decryptJwtSecret = async (req: Request): Promise<string> => {
   const region = process.env.AWS_REGION;
   const endpoint = process.env.AWS_ENDPOINT;

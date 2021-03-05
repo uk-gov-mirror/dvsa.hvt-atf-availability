@@ -93,7 +93,7 @@ describe('Test availability.service', () => {
       const result: AuthorisedTestingFacility = await availabilityService.updateAtfAvailability(
         {} as Request,
         tokenPayload,
-        true
+        true,
       );
 
       expect(result).toStrictEqual(updatedAtf);
@@ -112,7 +112,7 @@ describe('Test availability.service', () => {
       await expect(() => availabilityService.updateAtfAvailability(
         {} as Request,
         tokenPayload,
-        false
+        false,
       )).rejects.toThrow(expectedError);
 
       const initialErrorString: string = JSON.stringify(initialError, Object.getOwnPropertyNames(initialError));
