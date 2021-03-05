@@ -58,7 +58,7 @@ describe('Test token.service', () => {
       const validToken: string = getValidToken();
       const req: Request = <Request> <unknown> { query: { token: validToken } };
 
-      const result: TokenPayload = await tokenService.extractTokenPayload(req);
+      const result: TokenPayload = await tokenService.extractTokenPayload(req, true);
 
       expect(awsMock.KMS).toHaveBeenCalledWith({
         apiVersion: '2014-11-01',
@@ -94,7 +94,7 @@ describe('Test token.service', () => {
       const req: Request = <Request> <unknown> { query: null };
 
       await expect(
-        async () => tokenService.extractTokenPayload(req),
+        async () => tokenService.extractTokenPayload(req, true),
       ).rejects.toThrow(
         new InvalidTokenException(),
       );
@@ -118,7 +118,7 @@ describe('Test token.service', () => {
       const req: Request = <Request> <unknown> { query: { token: invalidToken } };
 
       await expect(
-        async () => tokenService.extractTokenPayload(req),
+        async () => tokenService.extractTokenPayload(req, true),
       ).rejects.toThrow(
         new InvalidTokenException(),
       );
@@ -130,7 +130,7 @@ describe('Test token.service', () => {
       const req: Request = <Request> <unknown> { query: { token: invalidToken } };
 
       await expect(
-        async () => tokenService.extractTokenPayload(req),
+        async () => tokenService.extractTokenPayload(req, true),
       ).rejects.toThrow(
         new InvalidTokenException(),
       );
@@ -144,7 +144,7 @@ describe('Test token.service', () => {
       const req: Request = <Request> <unknown> { query: { token: invalidToken } };
 
       await expect(
-        async () => tokenService.extractTokenPayload(req),
+        async () => tokenService.extractTokenPayload(req, true),
       ).rejects.toThrow(
         new InvalidTokenException(),
       );
@@ -158,7 +158,7 @@ describe('Test token.service', () => {
       const req: Request = <Request> <unknown> { query: { token: invalidToken } };
 
       await expect(
-        async () => tokenService.extractTokenPayload(req),
+        async () => tokenService.extractTokenPayload(req, true),
       ).rejects.toThrow(
         new InvalidTokenException(),
       );
@@ -176,7 +176,7 @@ describe('Test token.service', () => {
       }));
 
       await expect(
-        async () => tokenService.extractTokenPayload(req),
+        async () => tokenService.extractTokenPayload(req, true),
       ).rejects.toThrow(error);
       expect(logger.warn).toBeCalledWith(
         req, expect.stringContaining('Failed to decrypt JWT_SECRET'),
