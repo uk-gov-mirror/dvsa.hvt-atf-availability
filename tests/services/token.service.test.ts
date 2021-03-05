@@ -70,9 +70,9 @@ describe('Test token.service', () => {
         CiphertextBlob: Buffer.from(jwtSecret, 'base64'),
       });
       expect(result).toStrictEqual({
-        "atfId": "856090d1-f2dc-4bbc-ad36-8d14382339e0",
-        "endDate": "2020-12-20T23:59:59.000Z",
-        "startDate": "2020-11-23T00:00:00.000Z",
+        atfId: '856090d1-f2dc-4bbc-ad36-8d14382339e0',
+        endDate: '2020-12-20T23:59:59.000Z',
+        startDate: '2020-11-23T00:00:00.000Z',
       });
     });
 
@@ -84,9 +84,9 @@ describe('Test token.service', () => {
       const result: TokenPayload = await tokenService.extractTokenPayload(req, true);
 
       expect(result).toStrictEqual({
-        "atfId": "856090d1-f2dc-4bbc-ad36-8d14382339e0",
-        "endDate": "2020-12-20T23:59:59.000Z",
-        "startDate": "2020-11-23T00:00:00.000Z",
+        atfId: '856090d1-f2dc-4bbc-ad36-8d14382339e0',
+        endDate: '2020-12-20T23:59:59.000Z',
+        startDate: '2020-11-23T00:00:00.000Z',
       });
     });
 
@@ -138,7 +138,7 @@ describe('Test token.service', () => {
         req, expect.stringContaining('Failed to verify token, error: "sub" is missing'),
       );
     });
- 
+
     it('should throw InvalidTokenException when "startDate" is missing', async () => {
       const invalidToken: string = getStartDateMissingToken();
       const req: Request = <Request> <unknown> { query: { token: invalidToken } };
@@ -240,5 +240,4 @@ describe('Test token.service', () => {
       expect(logger.warn).toHaveBeenCalledWith(req, 'Failed to generate new ATF [atf-id] token');
     });
   });
- 
 });

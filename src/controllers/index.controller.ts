@@ -21,14 +21,14 @@ const buildRedirectUri = (baseUri: string, req: Request, retry = false) : string
   return redirectUri;
 };
 
-export const updateAvailability = async(req:Request, res:Response, next: NextFunction): Promise<void> => {
+export const updateAvailability = async (req:Request, res:Response, next: NextFunction): Promise<void> => {
   logger.info(req, 'presenting ATF availability choice');
   try {
     const tokenPayload: TokenPayload = await tokenService.extractTokenPayload(req);
-    let atf: AuthorisedTestingFacility = await availabilityService.getAtf(req, tokenPayload.atfId);
+    const atf: AuthorisedTestingFacility = await availabilityService.getAtf(req, tokenPayload.atfId);
     atf.availability = availabilityService.setAvailability(tokenPayload, false);
     atf.token = tokenService.retrieveTokenFromQueryParams(req);
-    res.render('availability-confirmation/choose', {'atf':atf})
+    return res.render('availability-confirmation/choose', { atf });
   } catch (error) {
     if (error instanceof ExpiredTokenException) {
       return res.redirect(302, buildRedirectUri('/reissue-token', req));
@@ -40,24 +40,25 @@ export const updateAvailability = async(req:Request, res:Response, next: NextFun
 
     return next(error);
   }
-}
+};
 
 export const confirmAvailability = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   logger.info(req, 'Handling confirm ATF availability request');
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-member-access
   const availability = req.body?.availability || undefined;
   try {
     const tokenPayload: TokenPayload = await tokenService.extractTokenPayload(req);
-    let atf: AuthorisedTestingFacility = await availabilityService.getAtf(req, tokenPayload.atfId);
+    const atf: AuthorisedTestingFacility = await availabilityService.getAtf(req, tokenPayload.atfId);
     atf.token = tokenService.retrieveTokenFromQueryParams(req);
-    if(availability === undefined) {
-      return res.render('availability-confirmation/choose',{
-        'atf':atf,
-        hasErrors:true,
-        formErrors:getDefaultChoiceError()
-      })
+    if (availability === undefined) {
+      return res.render('availability-confirmation/choose', {
+        atf,
+        hasErrors: true,
+        formErrors: getDefaultChoiceError(),
+      });
     }
-    const updateResponse = await availabilityService.updateAtfAvailability(req,tokenPayload, (availability === 'true'));
-    logger.info(req,'update response is ' + updateResponse.availability.isAvailable + 'set for ' + updateResponse.id );
+    const updateResponse = await availabilityService.updateAtfAvailability(req, tokenPayload, (availability === 'true'));
+    logger.info(req, `update response is ${updateResponse.availability.isAvailable.toString()} set for ${updateResponse.id}`);
     const templateName: string = booleanHelper.mapBooleanToYesNoString((availability === 'true'));
     return res.render(`availability-confirmation/${templateName}`, { atf });
   } catch (error) {

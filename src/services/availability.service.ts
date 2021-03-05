@@ -41,17 +41,15 @@ const updateAtfAvailability = async (req: Request, tokenPayload: TokenPayload, i
     });
 };
 
-const setAvailability = (tokenPayload: TokenPayload, availability: boolean) => {
-  return {
-    isAvailable: availability,
-    startDate: tokenPayload.startDate,
-    endDate: tokenPayload.endDate,
-    lastUpdated: new Date().toISOString(),
-  };
-}
+const setAvailability = (tokenPayload: TokenPayload, availability: boolean) => ({
+  isAvailable: availability,
+  startDate: tokenPayload.startDate,
+  endDate: tokenPayload.endDate,
+  lastUpdated: new Date().toISOString(),
+});
 
 export const availabilityService = {
   getAtf,
   updateAtfAvailability,
-  setAvailability
+  setAvailability,
 };
