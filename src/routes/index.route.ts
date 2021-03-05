@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import {
-  privacy, accessibility, confirmAvailability, expiredToken, reissueToken, updateAvailability
+  privacy, accessibility, confirmAvailability, expiredToken, reissueToken, updateAvailability,
 } from '../controllers/index.controller';
 
 const indexRoute: Router = express.Router();

@@ -28,5 +28,4 @@ const binaryMimeTypes = [
 ];
 const server = awsServerlessExpress.createServer(app, null, binaryMimeTypes);
 
-// eslint-disable-next-line max-len
 export const handler = (event: APIGatewayProxyEvent, context: Context): Server => awsServerlessExpress.proxy(server, event, context);
