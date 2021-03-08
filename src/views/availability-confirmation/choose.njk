@@ -7,7 +7,7 @@
   <div class="govuk-grid-column-full">
 <form class="form" action="/confirm?token={{atf.token}}" method="post">
 {% if hasErrors %}
-    
+
     {{ error.summary(formErrors) }}
 
     {{ govukRadios({
@@ -36,7 +36,7 @@
                 text: "No, my test facility is fully booked"
                 }
             ]
-            }) 
+            })
     }}
 {% else %}
     {{ govukRadios({
@@ -62,13 +62,16 @@
                 text: "No, my test facility is fully booked"
                 }
             ]
-            }) 
+            })
     }}
-{% endif %}      
+{% endif %}
     {{ govukButton({
-        text: "Continue"
+        text: "Continue",
+        type: "submit",
+        attributes: {
+          id: "availability-submit-button"
+        }
     }) }}
-   
 </form>
 </div>
 </div>
