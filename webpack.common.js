@@ -35,7 +35,6 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         { from: './simple-proxy-api.yml', to: '.aws-sam/build/simple-proxy-api.yml' },
-        { from: './.env', to: `.aws-sam/build/${LAMBDA_NAME}/` },
         { from: './src/views', to: `.aws-sam/build/${LAMBDA_NAME}/views` },
         { from: './node_modules/govuk-frontend', to: `.aws-sam/build/${LAMBDA_NAME}/views/govuk-frontend` },
         { from: './node_modules/govuk-frontend/govuk/assets', to: `.aws-sam/build/${LAMBDA_NAME}/public/assets` },

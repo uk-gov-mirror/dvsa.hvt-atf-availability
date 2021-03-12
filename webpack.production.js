@@ -9,7 +9,8 @@ const MinifyBundledPlugin = require('minify-bundled-webpack-plugin');
 
 const LAMBDA_NAME = 'AtfAvailabilityFunction';
 const OUTPUT_FOLDER = './dist'
-const BUILD_VERSION = branchName().replace("/","-");
+const REPO_NAME = 'hvt-atf-availability';
+const BRANCH_NAME = branchName().replace("/","-");
 
 class BundlePlugin {
   constructor(params) {
@@ -56,32 +57,35 @@ class BundlePlugin {
   }
 };
 
-module.exports = merge(common, {
-  mode: 'production',
-  plugins: [
-    new MinifyBundledPlugin({
-      patterns: [`.aws-sam/**/*.js`],
-    }),
-    new BundlePlugin({
-      archives: [
-        {
-          inputPath: `.aws-sam/build/${LAMBDA_NAME}`,
-          outputPath: `${OUTPUT_FOLDER}`,
-          outputName: `HVT-${LAMBDA_NAME}-${BUILD_VERSION}`,
-          ignore: ['public']
-        }
-      ],
-      assets: [
-        {
-          inputPath: `./.aws-sam/build/${LAMBDA_NAME}/public`,
-          outputPath: `${OUTPUT_FOLDER}/${LAMBDA_NAME}-cloudfront-assets-${BUILD_VERSION}`,
-        }
-      ]
-    }),
-  ],
-  optimization: {
-    minimizer: [
-      new CssMinimizerPlugin(),
+module.exports = env => {
+  let commit = env ? env.commit ? env.commit : 'local' : 'local' ;
+  return merge(common, {
+    mode: 'production',
+    plugins: [
+      new MinifyBundledPlugin({
+        patterns: [`.aws-sam/**/*.js`],
+      }),
+      new BundlePlugin({
+        archives: [
+          {
+            inputPath: `.aws-sam/build/${LAMBDA_NAME}`,
+            outputPath: `${OUTPUT_FOLDER}`,
+            outputName: `${REPO_NAME}-${BRANCH_NAME}-${commit}`,
+            ignore: ['public']
+          }
+        ],
+        assets: [
+          {
+            inputPath: `./.aws-sam/build/${LAMBDA_NAME}/public`,
+            outputPath: `${OUTPUT_FOLDER}/${REPO_NAME}-cloudfront-assets-${BRANCH_NAME}-${commit}`,
+          }
+        ]
+      }),
     ],
-  },
-});
+    optimization: {
+      minimizer: [
+        new CssMinimizerPlugin(),
+      ],
+    },
+  });
+}
