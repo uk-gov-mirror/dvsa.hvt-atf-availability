@@ -1,3 +1,4 @@
+ {% from "includes/analytics/macro.njk" import headscript as gaHeadScript %}
 <!--[if !IE 8]><!-->
        <link href="{{getAsset('all.css')}}" rel="stylesheet">
   <!--<![endif]-->
@@ -14,3 +15,49 @@
   <![endif]-->
 
   <link rel="icon" href="{{getAsset('images/favicon.ico')}}" type="image/x-icon"/>
+
+  <script src="{{getAsset('cookie-manager.js')}}"></script>
+
+  <script>
+    window.cookieManager.init({
+            "delete-undefined-cookies": true,
+            "user-preference-cookie-name": "cm-user-preferences",
+            "user-preference-cookie-secure": false,
+            "user-preference-saved-callback" : function () {
+                document.getElementById('cookie-preference-success').classList.remove('govuk-visually-hidden');
+                window.scrollTo(0,0);
+            } ,
+            "user-preference-cookie-expiry-days": 365,
+            "user-preference-configuration-form-id": "cookie-manager-form",
+            "cookie-banner-id": "cm_cookie_notification",
+            "cookie-banner-visibility-class": "hidden",
+            "cookie-banner-visible-on-page-with-preference-form": false,
+            "cookie-banner-saved-callback": function () {
+                document.getElementById('accept-all-cookies-success').classList.remove('govuk-visually-hidden');
+            },
+            "set-checkboxes-in-preference-form": true,
+            "cookie-manifest": [
+                {
+                    "category-name": "essential",
+                    "optional": false,
+                    "cookies": [
+                        "cm-user-preferences",
+                        "incap_ses_",
+                        "nlbi_",
+                        "visid_incap_"
+                    ]
+                },
+                {
+                    "category-name": "analytics",
+                    "optional": true,
+                    "cookies": [
+                        "_ga",
+                        "_gat",
+                        "_gid"
+                    ]
+                }
+            ]
+        });
+  </script>
+
+  {{ gaHeadScript(analytics) }}

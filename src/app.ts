@@ -12,6 +12,7 @@ import assetRoute from './routes/asset.route';
 import indexRoute from './routes/index.route';
 import { getCorrelationId } from './middleware/correlation.middleware';
 import { logger } from './utils/logger.util';
+import cookieParser from 'cookie-parser';
 
 // Environment variables
 dotenv.config();
@@ -25,7 +26,7 @@ const routes: Router[] = [
 // View engine
 app.set('view engine', 'njk');
 app.set('views', path.join(__dirname, 'views'));
-setUpNunjucks(app);
+const env = setUpNunjucks(app);
 
 // Middleware
 app.use(compression());
@@ -34,6 +35,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(awsServerlessExpressMiddleware.eventContext());
 app.use(getCorrelationId);
+app.use(cookieParser());
+
+app.use((req: Request, res: Response, next: NextFunction) => {
+  env.addGlobal('analytics', 'cm-user-preferences' in req.cookies ? JSON.parse(req.cookies['cm-user-preferences']).analytics == "on" || false : false);
+  next();
+});
 
 // Routes
 app.use(routes);

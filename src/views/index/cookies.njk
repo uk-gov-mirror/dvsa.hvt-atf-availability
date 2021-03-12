@@ -1,0 +1,219 @@
+{% from "govuk-frontend/govuk/components/table/macro.njk" import govukTable %}
+{% extends "layouts/layout.njk" %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-heading-l">Cookies</h2>
+        <p class="govuk-body">The {{ serviceName }} puts small files (known as 'cookies') onto your computer to collect information about how you browse the site.</p>
+        <p class="govuk-body">Cookies are used to:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>measure how you use the website so it can be updated and improved based on your needs</li>
+          <li>remember the notifications you've seen so that we don't show them to you again</li>
+          <li>direct you down certain journeys to improve your experience</li>
+        </ul>
+
+        <div class="govuk-inset-text">
+          <p class="capitalize">{{ serviceName }} cookies aren’t used to identify you personally.</p>
+        </div>
+
+        <p class="govuk-body">You’ll normally see a message on the site before we store a cookie on your computer.</p>
+
+        <p class="govuk-body">Find out more about 
+            <a href="http://www.aboutcookies.org/" class="govuk-link">how to manage cookies.</a>
+        </p>
+
+        <h2 class="govuk-heading-l">How cookies are used on the {{ serviceName }}</h2>
+
+        <p class="govuk-body">There are a number of different types of cookie used in the {{ serviceName }} which allow the system to work securely and consistently.
+        These are:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li>Google Analytics cookies</li>
+            <li class="capitalize">{{ serviceName }} cookies</li>
+            <li>Third-party cookies</li>
+        </ul>
+
+        <h3 class="govuk-heading-m">Google Analytics cookies</h3>
+        <p class="govuk-body">We use Google Analytics software to collect information about how you use the {{ serviceName }}. We do this to help make sure the site is meeting the needs of its users and to help us make improvements.</p>
+
+        <p class="govuk-body">Google Analytics stores information about:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li>the pages you visit on the {{ serviceName }}</li>
+            <li>how long you spend on each page</li>
+            <li>how you got to the site</li>
+            <li>what you click on while you're visiting the site</li>
+            <li>Google does not collect or store your personal information, for example your name or address, so this information can't be used to identify who you are. We don't allow Google to use or share our analytics data.</li>
+        </ul>
+
+        <p class="govuk-body">Google Analytics sets the following cookies:</p>
+
+    </div>    
+  </div>
+
+{{ govukTable({
+  firstCellIsHeader: true,
+  head: [
+    {
+      text: "Name"
+    },
+    {
+      text: "Purpose",
+      classes: "govuk-!-width-two-thirds"
+    },
+    {
+      text: "Expiry"
+    }
+  ],
+  rows: [
+    [
+      {
+        text: "_ga"
+      },
+      {
+        text: "This helps us count how many people visit the service by tracking if the user has visited before"
+      },
+      {
+          text: "2 years"
+      }
+    ],
+    [
+      {
+        text: "_gat"
+      },
+      {
+        text: "Used to manage the rate at which page view requests are made"
+      },
+      {
+          text: "10 minutes"
+      }
+    ],
+    [
+      {
+          text: "_gid"
+      },
+      {
+        text: "Used to distinguish between users of the service"
+      },
+      {
+        text: "24 hours"
+      }
+    ]
+  ]
+}) }}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h3 class="govuk-heading-m capitalize">{{ serviceName }} application cookies</h3>
+        <p class="govuk-body">The {{ serviceName }} sets a number of cookies to remember what you have done on the site and what messages you have seen.</p>
+
+        <h4 class="govuk-heading-s">Our cookie message</h4>
+        <p class="govuk-body">You may see a pop-up cookies message when you first visit {{ serviceName }} service. We'll store a cookie so that your computer knows you've seen it and knows not to show it again.</p>
+    </div>
+</div>
+
+{{ govukTable({
+  firstCellIsHeader: true,
+  head: [
+    {
+      text: "Name"
+    },
+    {
+      text: "Purpose",
+      classes: "govuk-!-width-two-thirds"
+    },
+    {
+      text: "Expiry"
+    }
+  ],
+  rows: [
+    [
+      {
+        text: "cm-user-preferences"
+      },
+      {
+        text: "Stores your cookie preferences and lets us know you’ve set them"
+      },
+      {
+          text: "1 year"
+      }
+    ]
+  ]
+}) }}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h3 class="govuk-heading-m">Imperva Incapsula cookies</h3>
+        <p class="govuk-body">Imperva Incapsula cookies help the Imperva Incapsula service identify malicious activity.</p>
+
+        <p class="govuk-body">The cookies collect information in an anonymous form. They don't collect or store any personal information (eg names or addresses) so this information can’t easily be used to identify who the user is.<p>
+
+        <p class="govuk-body">The only constant cookie is the Visitor ID (visid_incap_{ID}). Other Imperva Incapsula cookies are removed within 15 minutes or once the browser is closed.</p>
+    </div>
+</div>
+
+{{ govukTable({
+  firstCellIsHeader: true,
+  head: [
+    {
+      text: "Name"
+    },
+    {
+      text: "Purpose",
+      classes: "govuk-!-width-two-thirds"
+    },
+    {
+      text: "Expiry"
+    }
+  ],
+  rows: [
+    [
+      {
+        text: "visid_incap {ID}"
+      },
+      {
+        text: "Used to relate sessions to a specific visitor’s device"
+      },
+      {
+          text: "1 year"
+      }
+    ],
+    [
+      {
+        text: "ncap_ses {ID}"
+      },
+      {
+        text: "Used to relate HTTP requests to a particular visit."
+      },
+      {
+          text: "When you close your browser"
+      }
+    ],
+    [
+      {
+          text: "nlbi {ID}"
+      },
+      {
+        text: "Used to direct website traffic load to servers."
+      },
+      {
+        text: "When you close your browser"
+      }
+    ]
+  ]
+}) }}
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h3 class="govuk-heading-m">Government services</h3>
+        <p class="govuk-body">Most services we link to are run by different government departments, for example HM Revenue and Customs (HMRC) or the Home Office.</p>
+        <p class="govuk-body">These services may set additional cookies and, if so, will have their own cookies policy.</p>
+        <h4 class="govuk-heading-s">Change your settings</h4>
+        <p class="govuk-body">
+        You can <a href="/cookie-preferences">change which cookies you're happy for us to use.</a></p>
+    </div>
+</div>
+{% endblock %}

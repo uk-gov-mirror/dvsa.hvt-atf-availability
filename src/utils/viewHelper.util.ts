@@ -9,7 +9,8 @@ export const setUpNunjucks = (app: Express): Environment => {
   }).addGlobal('NODE_ENV', process.env.NODE_ENV)
     .addGlobal('getAsset', (name: string) => (process.env.CDN_URL || '/assets/') + name)
     .addFilter('formatDate', (date: string) => format(utcToZonedTime(new Date(date), process.env.TIMEZONE), 'd MMMM yyyy'))
-    .addFilter('formatDateTime', (date: string) => format(utcToZonedTime(new Date(date), process.env.TIMEZONE), 'EEEE d MMMM yyyy \'at\' h:mmaaaaa\'m\''));
+    .addFilter('formatDateTime', (date: string) => format(utcToZonedTime(new Date(date), process.env.TIMEZONE), 'EEEE d MMMM yyyy \'at\' h:mmaaaaa\'m\''))
+    .addGlobal('serviceName', 'find an MOT test centre for a heavy goods vehicle (HGV), bus or trailer');
   // ... any other globals or custom filters here
 
   return env;

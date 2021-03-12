@@ -1,0 +1,15 @@
+<div class="govuk-visually-hidden theme__cookie-success-message-grey" id="accept-all-cookies-success">
+    <div class="govuk-width-container">
+        <div class="govuk-!-padding-top-5 govuk-!-padding-bottom-7">
+            <span class="govuk-body"  >You’ve accepted all cookies. You can <a href="/cookie-preferences">change your cookie settings</a> at any time.</span>
+
+            <span id="cookie-accept-all-success-banner-hide" class="govuk-body u-float-right"><a href="#">Hide</a></span>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    document.getElementById('cookie-accept-all-success-banner-hide').onclick = function(){
+        document.getElementById('accept-all-cookies-success').classList.add('govuk-visually-hidden');
+    };
+</script>

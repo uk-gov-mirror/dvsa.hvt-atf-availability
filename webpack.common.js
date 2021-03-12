@@ -40,6 +40,7 @@ module.exports = {
         { from: './node_modules/govuk-frontend', to: `.aws-sam/build/${LAMBDA_NAME}/views/govuk-frontend` },
         { from: './node_modules/govuk-frontend/govuk/assets', to: `.aws-sam/build/${LAMBDA_NAME}/public/assets` },
         { from: './node_modules/govuk-frontend/govuk/all.js', to: `.aws-sam/build/${LAMBDA_NAME}/public/all.js` },
+        { from: './node_modules/@dvsa/cookie-manager/cookie-manager.js', to: `.aws-sam/build/${LAMBDA_NAME}/public/cookie-manager.js` },
         { 
           from: './src/public/scss/index.scss',
           to: `.aws-sam/build/${LAMBDA_NAME}/public/all.css`,

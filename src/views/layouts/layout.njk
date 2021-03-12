@@ -5,6 +5,7 @@
 {% from "govuk-frontend/govuk/components/header/macro.njk" import govukHeader %}
 {% from "govuk-frontend/govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
 {% from "govuk-frontend/govuk/components/footer/macro.njk" import govukFooter %}
+{% from "includes/analytics/macro.njk" import bodyscript as gaBodyScript %}
 
 {% set htmlClasses = "app-html-class" %}
 {% set htmlLang = "en" %}
@@ -37,6 +38,10 @@
     document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
 
   </script>
+
+{% include "includes/cookie-manager/cookie-success-banner.njk" %}
+{% include "includes/cookie-manager/cookie-success-all-banner.njk" %}
+{% include "includes/cookie-manager/cookie-banner.njk" %}
 
 {% block bodyStart %}
 {% endblock %}
@@ -86,11 +91,16 @@
         {
           href: "/privacy",
           text: "Privacy"
+        },
+        {
+          href: "/cookies",
+          text: "Cookies"
         }
-      ]
-    }
+      ]}
   }) }}
 {% endblock %}
+
+ {{ gaBodyScript(analytics) }}
 
 {% block bodyEnd %}
  {% include "includes/footerjs.njk" %}
