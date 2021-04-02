@@ -1,8 +1,24 @@
-/* eslint-disable max-len */
-export const getValidToken = (): string => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDU4ODcwMzIsInN0YXJ0RGF0ZSI6MTYwNjA4OTYwMCwiZW5kRGF0ZSI6MTYwODUwODc5OSwiZXhwIjoxNjA2NDkxODMyLCJpc3MiOiJodHRwczovL2ludC5jb25maXJtLW1vdC10ZXN0LWF2YWlsYWJpbGl0eS5zZXJ2aWNlLmdvdi51ayIsInN1YiI6Ijg1NjA5MGQxLWYyZGMtNGJiYy1hZDM2LThkMTQzODIzMzllMCJ9.Ylu2FSWGVLzL2viQfSnT_ahUvZYhUHJu9Jsy1A497cE';
-export const getExpiredToken = (): string => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDU4ODMyMDksInN0YXJ0RGF0ZSI6MTYwNjA4OTYwMCwiZW5kRGF0ZSI6MTYwODUwODc5OSwiZXhwIjoxNjA1Mjc4NDA5LCJpc3MiOiJodHRwczovL2ludC5jb25maXJtLW1vdC10ZXN0LWF2YWlsYWJpbGl0eS5zZXJ2aWNlLmdvdi51ayIsInN1YiI6Ijg1NjA5MGQxLWYyZGMtNGJiYy1hZDM2LThkMTQzODIzMzllMCJ9.fqzJrCkciLPcZssBDE1u3EtwhH6PgptiEbyWkByI4OA';
+import jwt from 'jsonwebtoken';
+
+export const getValidToken = (): string => tokenGenerator({algorithm:"HS256",issuer:"issuer","expiresIn":60 * 60,subject:"856090d1-f2dc-4bbc-ad36-8d14382339e0"},getJwtSecret(),{startDate:1619395199,endDate:1619395199});
+
+export const getExpiredToken = (): string => tokenGenerator({algorithm:"HS256",issuer:"issuer","expiresIn":0,subject:"856090d1-f2dc-4bbc-ad36-8d14382339e0"},getJwtSecret(),{startDate:1619395199,endDate:1619395199});
+
 export const getInvalidToken = (): string => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdGFydERhdGUiOjE2MDE5OTQxMDUsImVuZERhdGUiOjE2MDQ0MTMzMDUsImlzQXZhaWxhYmxlIjp0cnVlLCJpYXQiOjMxNTUzMjgwMCwiZXhwIjozMTYwNTEyMDAsImlzcyI6Imh0dHBzOi8vYm9vay1oZ3YtYnVzLXRyYWlsZXItbW90LnNlcnZpY2UuZ292LnVrIiwic3ViIjoiMUQ2MkFCRkQtRjAzRC00REUwLTlFRDUtOEMwMkY5N0M1NTNEIn0.xW2aFHfxhXDTkxXTtqAEdnHlyJtdFhDwXdRIPqLBIck';
-export const getSubMissingToken = () : string => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDU4ODk2MjYsInN0YXJ0RGF0ZSI6MTYwNjA4OTYwMCwiZW5kRGF0ZSI6MTYwODUwODc5OSwiZXhwIjoxNjA2NDk0NDI2LCJpc3MiOiJodHRwczovL2ludC5jb25maXJtLW1vdC10ZXN0LWF2YWlsYWJpbGl0eS5zZXJ2aWNlLmdvdi51ayJ9.Q0DDJ9D2kErVqGawRO7fK7vH8zsWLKvQcz4Kux711uc';
-export const getStartDateMissingToken = () : string => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDU4OTAyMTUsImVuZERhdGUiOjE2MDg1MDg3OTksImV4cCI6MTYwNjQ5NTAxNSwiaXNzIjoiaHR0cHM6Ly9pbnQuY29uZmlybS1tb3QtdGVzdC1hdmFpbGFiaWxpdHkuc2VydmljZS5nb3YudWsiLCJzdWIiOiI4NTYwOTBkMS1mMmRjLTRiYmMtYWQzNi04ZDE0MzgyMzM5ZTAifQ.GCjuTEqO8fZ9ytQ-mePzaaoimdlXnJuWnxrNvw47jCE';
-export const getEndDateMissingToken = () : string => 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDU4OTAzODQsInN0YXJ0RGF0ZSI6MTYwNjA4OTYwMCwiZXhwIjoxNjA2NDk1MTg0LCJpc3MiOiJodHRwczovL2ludC5jb25maXJtLW1vdC10ZXN0LWF2YWlsYWJpbGl0eS5zZXJ2aWNlLmdvdi51ayIsInN1YiI6Ijg1NjA5MGQxLWYyZGMtNGJiYy1hZDM2LThkMTQzODIzMzllMCJ9.ycNXufm2lKcd0lMatnxc7n6kFe_RMdEnYHgM_yj_e7A';
-export const getJwtSecret = (): string => 'hvtr4567';
+
+export const getSubMissingToken = () : string => tokenGenerator({algorithm:"HS256",issuer:"issuer","expiresIn":60 * 60},getJwtSecret(),{startDate:1619395199,endDate:1619395199});
+
+export const getStartDateMissingToken = () : string => tokenGenerator({algorithm:"HS256",issuer:"issuer","expiresIn":60 * 60,subject:"856090d1-f2dc-4bbc-ad36-8d14382339e0"},getJwtSecret(),{endDate:1619395199});
+
+export const getEndDateMissingToken = () : string => tokenGenerator({algorithm:"HS256",issuer:"issuer","expiresIn":60 * 60,subject:"856090d1-f2dc-4bbc-ad36-8d14382339e0"},getJwtSecret(),{startDate:1619395199});
+
+export const getJwtSecret = (): string => 'hvtr4567'
+
+interface payload {
+    startDate?:number,
+    endDate?:number
+}
+
+const tokenGenerator = (options:jwt.SignOptions, secret:string, payload?:payload, ):string => {
+   return jwt.sign(payload || {}, secret, options);
+}
