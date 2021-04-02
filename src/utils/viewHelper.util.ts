@@ -1,6 +1,7 @@
 import nunjucks, { Environment } from 'nunjucks';
 import { Express } from 'express';
 import { format, utcToZonedTime } from 'date-fns-tz';
+import { isValid, parseISO } from 'date-fns';
 
 export const setUpNunjucks = (app: Express): Environment => {
   const env = nunjucks.configure(['views'], {
@@ -11,8 +12,8 @@ export const setUpNunjucks = (app: Express): Environment => {
     // eslint-disable-next-line max-len
     .addFilter('formatDate', (date: string) => format(utcToZonedTime(new Date(date), process.env.TIMEZONE), 'd MMMM yyyy'))
     // eslint-disable-next-line max-len
-    .addFilter('formatDateTime', (date: string) => format(utcToZonedTime(new Date(date), process.env.TIMEZONE), 'EEEE d MMMM yyyy \'at\' h:mmaaaaa\'m\''));
-  // ... any other globals or custom filters here
+    .addFilter('formatDateTime', (date: string) => format(utcToZonedTime(new Date(date), process.env.TIMEZONE), 'EEEE d MMMM yyyy \'at\' h:mmaaaaa\'m\''))
+   // ... any other globals or custom filters here
 
   return env;
 };

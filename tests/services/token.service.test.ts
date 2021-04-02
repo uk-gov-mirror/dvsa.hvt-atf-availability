@@ -56,6 +56,7 @@ describe('Test token.service', () => {
 
     it('should return properly decoded token payload data when valid token provided', async () => {
       const validToken: string = getValidToken();
+      console.log(validToken);
       const req: Request = <Request> <unknown> { query: { token: validToken } };
 
       const result: TokenPayload = await tokenService.extractTokenPayload(req);
@@ -71,8 +72,8 @@ describe('Test token.service', () => {
       });
       expect(result).toStrictEqual({
         "atfId": "856090d1-f2dc-4bbc-ad36-8d14382339e0",
-        "endDate": "2020-12-20T23:59:59.000Z",
-        "startDate": "2020-11-23T00:00:00.000Z",
+        "endDate": "2021-04-25T23:59:59.000Z",
+        "startDate": "2021-04-25T23:59:59.000Z",
       });
     });
 
@@ -85,8 +86,8 @@ describe('Test token.service', () => {
 
       expect(result).toStrictEqual({
         "atfId": "856090d1-f2dc-4bbc-ad36-8d14382339e0",
-        "endDate": "2020-12-20T23:59:59.000Z",
-        "startDate": "2020-11-23T00:00:00.000Z",
+        "endDate": "2021-04-25T23:59:59.000Z",
+        "startDate": "2021-04-25T23:59:59.000Z",
       });
     });
 
