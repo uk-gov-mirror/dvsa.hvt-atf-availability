@@ -39,7 +39,7 @@ describe('Test viewHelper.util', () => {
       const formatDateTime: DateFunctionType = <DateFunctionType> nunjucks.getFilter('formatDateTime');
 
       formatDateTime(someDateIsoString);
-
+    
       expect(utcToZonedTime).toHaveBeenCalledWith(new Date(someDateIsoString), timezone);
       expect(format).toHaveBeenCalledWith(new Date(someDateIsoString), 'EEEE d MMMM yyyy \'at\' h:mmaaaaa\'m\'');
     });
@@ -48,7 +48,8 @@ describe('Test viewHelper.util', () => {
       (utcToZonedTime as jest.Mock).mockImplementation(() => new Date(someIsoDateFromInvalidUnixTimestamp));
       const formatDateTime: DateFunctionType = <DateFunctionType> nunjucks.getFilter('formatDateTime');
       formatDateTime(someIsoDateFromInvalidUnixTimestamp); 
-      expect(format).toHaveBeenCalledWith(new Date(someIsoDateFromInvalidUnixTimestamp), 'EEEE d MMMM yyyy \'at\' h:mmaaaaa\'m\'')
+      expect(format).toHaveBeenCalledWith(new Date(someIsoDateFromInvalidUnixTimestamp), 'EEEE d MMMM yyyy \'at\' h:mmaaaaa\'m\'');
+      
     })
   });
   
