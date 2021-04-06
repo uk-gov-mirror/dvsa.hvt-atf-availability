@@ -1,5 +1,3 @@
-
-
 import jwt from 'jsonwebtoken';
 
 export const getValidToken = (): string => tokenGenerator({algorithm:"HS256",issuer:"issuer","expiresIn":60 * 60,subject:"856090d1-f2dc-4bbc-ad36-8d14382339e0"},getJwtSecret(),{startDate:1619395199,endDate:1619395199});
