@@ -28,7 +28,11 @@ export const updateAvailability = async (req:Request, res:Response, next: NextFu
     const atf: AuthorisedTestingFacility = await availabilityService.getAtf(req, tokenPayload.atfId);
     atf.availability = availabilityService.setAvailability(tokenPayload, false);
     atf.token = tokenService.retrieveTokenFromQueryParams(req);
-    return res.render('availability-confirmation/choose', { atf });
+    logger.debug(req,"Start date retrieved  " + new Date(tokenPayload.startDate).toISOString);
+    logger.debug(req,"End date retrieved  " + new Date(tokenPayload.endDate).toISOString);
+
+    res.render('availability-confirmation/choose', {'atf':atf})
+
   } catch (error) {
     if (error instanceof ExpiredTokenException) {
       return res.redirect(302, buildRedirectUri('/reissue-token', req));
