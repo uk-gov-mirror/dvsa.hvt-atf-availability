@@ -28,8 +28,6 @@ export const updateAvailability = async (req:Request, res:Response, next: NextFu
     const atf: AuthorisedTestingFacility = await availabilityService.getAtf(req, tokenPayload.atfId);
     atf.availability = availabilityService.setAvailability(tokenPayload, false);
     atf.token = tokenService.retrieveTokenFromQueryParams(req);
-    logger.debug(req,"Start date retrieved  " + new Date(tokenPayload.startDate).toISOString);
-    logger.debug(req,"End date retrieved  " + new Date(tokenPayload.endDate).toISOString);
 
     res.render('availability-confirmation/choose', {'atf':atf})
 
@@ -61,8 +59,11 @@ export const confirmAvailability = async (req: Request, res: Response, next: Nex
         formErrors: getDefaultChoiceError(),
       });
     }
-    const updateResponse = await availabilityService.updateAtfAvailability(req, tokenPayload, (availability === 'true'));
-    logger.info(req, `update response is ${updateResponse.availability.isAvailable.toString()} set for ${updateResponse.id}`);
+    const newAvailability = await availabilityService.updateAtfAvailability(req, tokenPayload, (availability === 'true'));
+    logger.info(req, `update response is ${newAvailability.availability.isAvailable.toString()} set for ${newAvailability.id}`);
+    atf.availability.startDate = newAvailability.availability.startDate;
+    atf.availability.endDate = newAvailability.availability.endDate;
+    atf.availability.isAvailable = availability;
     const templateName: string = booleanHelper.mapBooleanToYesNoString((availability === 'true'));
     return res.render(`availability-confirmation/${templateName}`, { atf });
   } catch (error) {

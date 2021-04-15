@@ -5,7 +5,9 @@
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
-    <p class="govuk-body-s" id="last-updated-date" >Last updated on {{ atf.availability.lastUpdated | formatDateTime }}</p>
+    {% if atf.availability.lastUpdated|length %}
+      <p class="govuk-body-s" id="last-updated-date" >Last updated on {{ atf.availability.lastUpdated | formatDateTime }}</p>
+    {% endif %}
  {{ govukBackLink({
     href: "/update?token="+atf.token,
     text: "Back",
