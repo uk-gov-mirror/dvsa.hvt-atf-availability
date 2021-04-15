@@ -91,13 +91,23 @@ describe('Test availability.controller', () => {
       const getAtfServiceMock = jest.spyOn(availabilityService, 'getAtf');
       getAtfServiceMock.mockReturnValue(
         Promise.resolve(
-          <AuthorisedTestingFacility><unknown>{ id: atfId, availability: { isAvailable: true } },
+          <AuthorisedTestingFacility><unknown>{ id: atfId, availability: {
+             isAvailable: true,
+             startDate: '2021-04-19T00:00:00.000Z',
+             endDate: '2021-05-16T23:59:59.000Z',
+             lastUpdated: '2021-04-14T16:57:35.429Z'
+            } },
         ),
       );
       const updateAvailability = jest.spyOn(availabilityService, 'updateAtfAvailability');
       updateAvailability.mockReturnValue(
         Promise.resolve(
-          <AuthorisedTestingFacility><unknown>{ id: atfId, availability: { isAvailable: true } },
+          <AuthorisedTestingFacility><unknown>{ id: atfId, availability: {
+             isAvailable: true,
+             startDate: '2021-04-26T00:00:00.000Z',
+             endDate: '2021-05-23T23:59:59.000Z',
+             lastUpdated: '2021-04-21T16:57:35.429Z'
+            } },
         ),
       )
       const renderMock = jest.spyOn(resMock, 'render');
@@ -106,7 +116,46 @@ describe('Test availability.controller', () => {
       expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock);
       expect(getAtfServiceMock).toHaveBeenCalledWith(reqMock, atfId);
       expect(renderMock).toHaveBeenCalledWith('availability-confirmation/yes', {
-        atf: { id: atfId, availability: { isAvailable: true }, token: "1234" },
+        atf: { id: atfId, availability: {
+          isAvailable: "true",
+          startDate: '2021-04-26T00:00:00.000Z',
+          endDate: '2021-05-23T23:59:59.000Z',
+          lastUpdated: '2021-04-14T16:57:35.429Z'
+         }, token: '1234' },
+      });
+    });
+
+    it('should call res.render() with proper params when there is no historical availability data', async () => {
+      const extractTokenPayloadServiceMock = jest.spyOn(tokenService, 'extractTokenPayload');
+      extractTokenPayloadServiceMock.mockReturnValue(Promise.resolve(<TokenPayload><unknown>{ atfId }));
+      const getAtfServiceMock = jest.spyOn(availabilityService, 'getAtf');
+      getAtfServiceMock.mockReturnValue(
+        Promise.resolve(
+          <AuthorisedTestingFacility><unknown>{ id: atfId, availability: {} },
+        ),
+      );
+      const updateAvailabilitySpy = jest.spyOn(availabilityService, 'updateAtfAvailability');
+      updateAvailabilitySpy.mockReturnValue(
+        Promise.resolve(
+          <AuthorisedTestingFacility><unknown>{ id: atfId, availability: {
+             isAvailable: true,
+             startDate: '2021-04-26T00:00:00.000Z',
+             endDate: '2021-05-23T23:59:59.000Z',
+             lastUpdated: '2021-04-21T16:57:35.429Z'
+            } },
+        ),
+      );
+      const renderMock = jest.spyOn(resMock, 'render');
+      await confirmAvailability(reqMock, resMock, nextMock);
+
+      expect(extractTokenPayloadServiceMock).toHaveBeenCalledWith(reqMock);
+      expect(getAtfServiceMock).toHaveBeenCalledWith(reqMock, atfId);
+      expect(renderMock).toHaveBeenCalledWith('availability-confirmation/yes', {
+        atf: { id: atfId, availability: {
+          isAvailable: "true",
+          startDate: '2021-04-26T00:00:00.000Z',
+          endDate: '2021-05-23T23:59:59.000Z',
+         }, token: '1234' },
       });
     });
 

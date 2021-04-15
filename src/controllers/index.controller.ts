@@ -60,8 +60,16 @@ export const confirmAvailability = async (req: Request, res: Response, next: Nex
         formErrors:getDefaultChoiceError()
       })
     }
-    const updateResponse = await availabilityService.updateAtfAvailability(req,tokenPayload, (availability === 'true'));
-    logger.info(req,'update response is ' + updateResponse.availability.isAvailable + 'set for ' + updateResponse.id );
+    const newAvailability = await availabilityService.updateAtfAvailability(req, tokenPayload, (availability === 'true'));
+    logger.info(req, `update response is ${newAvailability.availability.isAvailable.toString()} set for ${newAvailability.id}`);
+
+    // Bug - new dates aren't getting set for the template
+    // availability & last updated value is not guaranteed to be there on the atf object
+    atf.availability.startDate = newAvailability.availability.startDate;
+    atf.availability.endDate = newAvailability.availability.endDate;
+    atf.availability.isAvailable = availability;
+    // don't set las updated value as this should show when the user LAST updated. Check in template is the value is there - if not, don't display that line
+
     const templateName: string = booleanHelper.mapBooleanToYesNoString((availability === 'true'));
     return res.render(`availability-confirmation/${templateName}`, { atf });
   } catch (error) {
