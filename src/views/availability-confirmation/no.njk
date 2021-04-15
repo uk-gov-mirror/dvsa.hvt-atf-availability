@@ -10,7 +10,9 @@
     text: "Back",
     attributes: { id: "back-link" }
   }) }}
-    <p class="govuk-body-s" id="last-updated-date" >Last updated on {{ atf.availability.lastUpdated | formatDateTime }}</p>
+    {% if atf.availability.lastUpdated|length %}
+      <p class="govuk-body-s" id="last-updated-date" >Last updated on {{ atf.availability.lastUpdated | formatDateTime }}</p>
+    {% endif %}
 
     {{ govukPanel({
       titleText: atf.name + " is fully booked",
