@@ -61,9 +61,10 @@ export const confirmAvailability = async (req: Request, res: Response, next: Nex
     }
     const newAvailability = await availabilityService.updateAtfAvailability(req, tokenPayload, (availability === 'true'));
     logger.info(req, `update response is ${newAvailability.availability.isAvailable.toString()} set for ${newAvailability.id}`);
-    atf.availability.startDate = newAvailability.availability.startDate;
-    atf.availability.endDate = newAvailability.availability.endDate;
-    atf.availability.isAvailable = availability;
+
+    const lastUpdated = atf.availability ? atf.availability.lastUpdated : null;
+    atf.availability = newAvailability.availability;
+    atf.availability.lastUpdated = lastUpdated;
     const templateName: string = booleanHelper.mapBooleanToYesNoString((availability === 'true'));
     return res.render(`availability-confirmation/${templateName}`, { atf });
   } catch (error) {
