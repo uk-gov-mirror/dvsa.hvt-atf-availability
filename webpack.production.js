@@ -5,7 +5,7 @@ const archiver = require('archiver');
 const branchName = require('current-git-branch');
 
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const MinifyBundledPlugin = require('minify-bundled-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const LAMBDA_NAME = 'AtfAvailabilityFunction';
 const OUTPUT_FOLDER = './dist'
@@ -33,7 +33,7 @@ class BundlePlugin {
   createArchive(inputPath, outputPath, outputName, ignore) {
     if (!fs.existsSync(outputPath)) {
       fs.mkdirSync(outputPath)
-    };
+    }
     const output = fs.createWriteStream(`${outputPath}/${outputName}.zip`);
     const archive = archiver('zip');
 
@@ -44,27 +44,24 @@ class BundlePlugin {
     archive.on('error', function(err){
         throw err;
     });
-    
+
     archive.pipe(output);
     archive.glob(
-      `**/*`, 
-      { 
+      `**/*`,
+      {
         cwd: inputPath,
         skip: ignore
       }
     );
     return archive.finalize();
   }
-};
+}
 
 module.exports = env => {
   let commit = env ? env.commit ? env.commit : 'local' : 'local' ;
   return merge(common, {
     mode: 'production',
     plugins: [
-      new MinifyBundledPlugin({
-        patterns: [`.aws-sam/**/*.js`],
-      }),
       new BundlePlugin({
         archives: [
           {
@@ -85,6 +82,7 @@ module.exports = env => {
     optimization: {
       minimizer: [
         new CssMinimizerPlugin(),
+        new TerserPlugin(),
       ],
     },
   });

@@ -5,7 +5,7 @@ A Serverless Node Express lambda (AtfAvailabilityFunction) for updating ATF avai
 
 ## Requirements
 
-- [node v14.17.3](https://nodejs.org/en/download/releases/)
+- [node v18.16.0](https://nodejs.org/en/download/releases/)
 - [Docker](https://www.docker.com/get-started)
 - [SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
 
@@ -13,7 +13,7 @@ A Serverless Node Express lambda (AtfAvailabilityFunction) for updating ATF avai
 ## Run Locally
 
 1. Follow build steps in [hvt-data](https://gitlab.motdev.org.uk/hvtesting/hvt-data/) to prepare local dataset and to generate the `KMS_KEY_ID` and an encrypted `JWT_SECRET`
-1. [hvt-read-api](https://gitlab.motdev.org.uk/hvtesting/hvt-read-api/) and [hvt-write-api](https://gitlab.motdev.org.uk/hvtesting/hvt-write-api/)  must be running
+1. [hvt-read-api](https://github.com/dvsa/hvt-read-api/) and [hvt-write-api](https://github.com/dvsa/hvt-write-api/)  must be running
 1. Follow build steps in [hvt-token-generator](https://gitlab.motdev.org.uk/hvtesting/hvt-data/) to generate ATF tokens
 1. `npm i`
 1. `cp .env.development .env` (be sure to add the `KMS_KEY_ID` and `JWT_SECRET` variables - they can be created in `hvt-data`)
