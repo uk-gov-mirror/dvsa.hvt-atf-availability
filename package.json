@@ -20,7 +20,7 @@
   "dependencies": {
     "aws-sdk": "^2.747.0",
     "aws-serverless-express": "^3.4.0",
-    "axios": "^1.4.0",
+    "axios": "^1.6.0",
     "body-parser": "^1.20.2",
     "compression": "^1.6.2",
     "cors": "^2.8.3",
