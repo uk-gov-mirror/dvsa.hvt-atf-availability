@@ -2,7 +2,6 @@
 
 A Serverless Node Express lambda (AtfAvailabilityFunction) for updating ATF availability.
 
-
 ## Requirements
 
 - [node v18.16.0](https://nodejs.org/en/download/releases/)
@@ -13,22 +12,22 @@ A Serverless Node Express lambda (AtfAvailabilityFunction) for updating ATF avai
 ## Run Locally
 
 1. Follow build steps in [hvt-data](https://gitlab.motdev.org.uk/hvtesting/hvt-data/) to prepare local dataset and to generate the `KMS_KEY_ID` and an encrypted `JWT_SECRET`
-1. [hvt-read-api](https://github.com/dvsa/hvt-read-api/) and [hvt-write-api](https://github.com/dvsa/hvt-write-api/)  must be running
-1. Follow build steps in [hvt-token-generator](https://gitlab.motdev.org.uk/hvtesting/hvt-data/) to generate ATF tokens
-1. `npm i`
-1. `cp .env.development .env` (be sure to add the `KMS_KEY_ID` and `JWT_SECRET` variables - they can be created in `hvt-data`)
-1. `npm run build:dev`
-1. `npm run start:dev`
-1. Go to `http://localhost:3002/update?token=<TOKEN_GENERATED_FROM_hvt-token-generator>` on browser
+2. [hvt-read-api](https://github.com/dvsa/hvt-read-api/) and [hvt-write-api](https://github.com/dvsa/hvt-write-api/)  must be running
+3. Follow build steps in [hvt-token-generator](https://gitlab.motdev.org.uk/hvtesting/hvt-data/) to generate ATF tokens
+4. `npm i`
+5. `cp .env.development .env` (be sure to add the `KMS_KEY_ID` and `JWT_SECRET` variables - they can be created in `hvt-data`)
+6. `npm run build:dev`
+7. `npm run start:dev`
+8. Go to `http://localhost:3002/update?token=<TOKEN_GENERATED_FROM_hvt-token-generator>` on browser
     - unique tokens for ATFs can be found on the DB
 
 
 ## Debug Locally (VS Code only)
 
 1. Run lambdas in debug mode: `npm run start:dev -- -d 5858`
-1. Add a breakpoint to the lambda being tested (`src/controllers/index.controller.ts`)
-1. Run the debug config from VS Code that corresponds to lambda being tested (`AtfAvailabilityFunction`)
-1. Go to `http://localhost:3002/update?token=<TOKEN_GENERATED_FROM_HVT-TOKEN-GENERATOR>` on browser
+2. Add a breakpoint to the lambda being tested (`src/controllers/index.controller.ts`)
+3. Run the debug config from VS Code that corresponds to lambda being tested (`AtfAvailabilityFunction`)
+4. Go to `http://localhost:3002/update?token=<TOKEN_GENERATED_FROM_HVT-TOKEN-GENERATOR>` on browser
     - unique tokens for ATFs can be found on the DB
 
 
@@ -43,9 +42,9 @@ A Serverless Node Express lambda (AtfAvailabilityFunction) for updating ATF avai
 ## Build for Production
 
 1. `npm i`
-1. add environment variables to `.env`
-1. `npm run build:prod`
-1.  Zip file and minified assets and can be found in `./dist/`
+2. Add environment variables to `.env`
+3. `npm run build:prod`
+4. Zip file and minified assets and can be found in `./dist/`
 
 
 ## Logging
