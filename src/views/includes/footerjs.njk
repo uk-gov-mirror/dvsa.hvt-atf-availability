@@ -1,3 +1,7 @@
  {# Run JavaScript at end of the <body>, to avoid blocking the initial render. #}
-  <script src="{{getAsset('all.js')}}"></script>
-  <script>window.GOVUKFrontend.initAll()</script>
+  <script type="module" src="{{getAsset('all.js')}}"></script>
+  <script type="module">
+    import { initAll } from "{{getAsset('all.js')}}"
+    initAll();
+  </script>
+  

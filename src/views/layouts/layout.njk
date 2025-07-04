@@ -1,10 +1,11 @@
 {# Example that changes every setting in the template #}
 
-{% from "govuk-frontend/govuk/components/back-link/macro.njk" import govukBackLink %}
-{% from "govuk-frontend/govuk/components/skip-link/macro.njk" import govukSkipLink %}
-{% from "govuk-frontend/govuk/components/header/macro.njk" import govukHeader %}
-{% from "govuk-frontend/govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
-{% from "govuk-frontend/govuk/components/footer/macro.njk" import govukFooter %}
+{% from "govuk-frontend/dist/govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk-frontend/dist/govuk/components/skip-link/macro.njk" import govukSkipLink %}
+{% from "govuk-frontend/dist/govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk-frontend/dist/govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
+{% from "govuk-frontend/dist/govuk/components/footer/macro.njk" import govukFooter %}
+{% from "govuk-frontend/dist/govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 
 {% set htmlClasses = "app-html-class" %}
 {% set htmlLang = "en" %}
@@ -18,7 +19,7 @@
 } %}
 {% set containerClasses = "app-width-container" %}
 <!DOCTYPE html>
-<html lang="en" class="govuk-template app-html-class">
+<html lang="en" class="govuk-template app-html-class govuk-template--rebranded">
 
 <head>
   <meta charset="utf-8">
@@ -53,21 +54,23 @@
   {{ govukHeader({
     homepageUrl: "https://www.gov.uk",
     containerClasses: "govuk-width-container",
-    serviceName: "Tell DVSA if you could take more MOT bookings",
-    serviceUrl: "#",
     useTudorCrown: true
   }) }}
-
+  {{ govukServiceNavigation({
+    serviceName: "Tell DVSA if you could take more MOT bookings",
+    serviceUrl: "/"
+  }) }}
+ 
+ 
+{% endblock %}
+{% block beforeContent %}
+  
 {% endblock %}
 <div class="govuk-width-container ">
 {% set mainClasses = "app-main-class" %}
 
  <main class="govuk-main-wrapper govuk-main-wrapper--auto-spacing" id="main-content" role="main">
 {% block main %}
-
-{% endblock %}
-
-{% block beforeContent %}
 
 {% endblock %}
 

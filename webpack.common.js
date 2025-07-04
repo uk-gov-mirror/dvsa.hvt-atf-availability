@@ -37,12 +37,19 @@ module.exports = {
         { from: './simple-proxy-api.yml', to: '.aws-sam/build/simple-proxy-api.yml' },
         { from: './src/views', to: `.aws-sam/build/${LAMBDA_NAME}/views` },
         { from: './node_modules/govuk-frontend', to: `.aws-sam/build/${LAMBDA_NAME}/views/govuk-frontend` },
-        { from: './node_modules/govuk-frontend/govuk/assets', to: `.aws-sam/build/${LAMBDA_NAME}/public/assets` },
-        { from: './node_modules/govuk-frontend/govuk/all.js', to: `.aws-sam/build/${LAMBDA_NAME}/public/all.js` },
+        { from: './node_modules/govuk-frontend/dist/govuk/assets/', to: `.aws-sam/build/${LAMBDA_NAME}/public/assets` },
+        { from: './node_modules/govuk-frontend/dist/govuk/assets/rebrand/images', to: `.aws-sam/build/${LAMBDA_NAME}/public/assets/images` },
+        { from: './node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.js', to: `.aws-sam/build/${LAMBDA_NAME}/public/all.js` },
         {
           from: './src/public/scss/index.scss',
           to: `.aws-sam/build/${LAMBDA_NAME}/public/all.css`,
-          transform: (content, path) => sass.renderSync({ file: path }).css.toString(),
+          transform: (content, path) => {
+            const result = sass.compileString(content.toString(), {
+              loadPaths: ['./src/public/scss/'],
+              style: 'compressed',
+            });
+            return result.css.toString();
+          }
         },
       ],
     }),
